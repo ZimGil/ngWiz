@@ -1,0 +1,9 @@
+<div>Hostname / IP</div>
+
+<input type="text" [(ngModel)]="hostname">
+:
+<input type="text" [(ngModel)]="port">
+<input type="checkbox" [(ngModel)]="isOpen">
+
+
+<button (click)="runServer()" [disabled]="!isAllInputsValid()">Run Server</button>
