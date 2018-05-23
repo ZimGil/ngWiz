@@ -10,7 +10,7 @@ export class ServeComponent {
   private readonly MINIMUM_PORT = 1000;
   private readonly MAXIMUM_PORT = 99999;
 
-  hostname = "ortichon";
+  hostname = "localhost";
   port = 4200;
   isOpen = true;
 
