@@ -10,6 +10,7 @@ export class ServeComponent {
   private readonly MINIMUM_PORT = 1000;
   private readonly MAXIMUM_PORT = 99999;
 
+  rootFolder = "C:\\Development";
   hostname = "localhost";
   port = 4200;
   isOpen = true;
@@ -18,9 +19,10 @@ export class ServeComponent {
     const request = {
       hostname: this.hostname,
       port: this.port,
-      isOpen: this.isOpen
+      isOpen: this.isOpen,
+      rootFolder: this.rootFolder
     }
-    console.log('request: ', request);  
+    console.log('request: ', request);
   }
 
   isPortValid(): boolean {
