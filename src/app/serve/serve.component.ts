@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { timeout } from 'q';
 
 @Component({
   selector: 'app-serve',
@@ -15,10 +14,8 @@ export class ServeComponent {
   hostname = "localhost";
   port = 4200;
   isOpen = true;
-  isForwardslash = false;
 
   runServer(): void {
-    this.forwardSlashToBackslash();
     const request = {
       hostname: this.hostname,
       port: this.port,
@@ -36,30 +33,8 @@ export class ServeComponent {
     return !!this.hostname;
   }
 
-  isRootFolderValid(): boolean {
-    if (this.isFirstCharLetter() && this.rootFolder[1] == ":" && this.isBackslash()) {
-      return true;
-    }
-    return false;
-  }
-
-  isFirstCharLetter(): boolean {
-    return ((this.rootFolder[0] >= 'a' && this.rootFolder[0] <= 'z') || (this.rootFolder[0] >= 'A' && this.rootFolder[0] <= 'Z'));
-  }
-
-  isBackslash(): boolean {
-    if ((this.rootFolder[2] == "/") || (this.rootFolder[2] == "\\")) {
-      return true;
-    }
-    return false;
-  }
-
-  forwardSlashToBackslash() {
-    this.rootFolder = this.rootFolder.replace(/\//g,"\\");
-  }
-
   isAllInputsValid(): boolean {
-    return this.isHostnameValid() && this.isPortValid() && this.isRootFolderValid();
+    return this.isHostnameValid() && this.isPortValid();
   }
 
 }
