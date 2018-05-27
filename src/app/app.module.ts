@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { ServeComponent } from './serve/serve.component';
+import { NewComponent } from './components/new/new.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ServeComponent
+    ServeComponent,
+    NewComponent
   ],
   imports: [
     FormsModule,
