@@ -1,0 +1,12 @@
+<h1>Generate</h1>
+<div>Name & Type</div>
+
+<input type="text" [(ngModel)]="name">
+
+<select [(ngModel)]="type">
+    <option *ngFor="let optionalType of optionalTypes" [value]="optionalType.id">
+      {{ optionalType.displayName }}
+  </option>
+</select>
+
+<button (click)="generateAngularClass()">Generate</button>
