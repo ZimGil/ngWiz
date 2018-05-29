@@ -1,0 +1,4 @@
+<h4>Create a New Project</h4>
+<input type="text" [(ngModel)]="name">
+
+<button (click)="createNewProject()" [disabled]="!isNameValid()">Create</button>
