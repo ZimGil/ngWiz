@@ -11,7 +11,7 @@ import { GenerateComponent } from './components/generate/generate.component';
   declarations: [
     AppComponent,
     ServeComponent,
-    NewComponent
+    NewComponent,
     GenerateComponent
   ],
   imports: [
