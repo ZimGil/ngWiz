@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-new',
@@ -6,14 +6,17 @@ import { Component } from '@angular/core';
   styleUrls: ['./new.component.css']
 })
 export class NewComponent {
+
   name: string;
+  @Input() rootFolder: string;
 
   isNameValid(): boolean {
     return !!this.name;
   }
   createNewProject(){
     const request = {
-      name: this.name
+      name: this.name,
+      rootFolder: this.rootFolder
     }
     console.log('request', request);
   }

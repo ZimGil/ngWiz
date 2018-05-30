@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { AngularClass } from '../../models/angular-class.enum';
 import { AngularClassOptions } from '../../models/angular-class-options.interface';
@@ -11,6 +11,7 @@ import { AngularClassOptions } from '../../models/angular-class-options.interfac
 export class GenerateComponent {
 
   name = 'Name';
+  @Input() rootFolder: string;
   type = AngularClass.Component;
   optionalTypes: AngularClassOptions[] = [
     {id: AngularClass.Component, displayName: 'Component'},
@@ -20,7 +21,8 @@ export class GenerateComponent {
   generateAngularClass(): void {
     const request = {
       name: this.name,
-      type: +this.type
+      type: +this.type,
+      rootFolder: this.rootFolder
     }
 
     console.log('request', request);

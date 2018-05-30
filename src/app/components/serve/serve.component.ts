@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-serve',
@@ -10,7 +10,7 @@ export class ServeComponent {
   private readonly MINIMUM_PORT = 1000;
   private readonly MAXIMUM_PORT = 99999;
 
-  rootFolder = "C:\\Development";
+  @Input() rootFolder: string;
   hostname = "localhost";
   port = 4200;
   isOpen = true;
