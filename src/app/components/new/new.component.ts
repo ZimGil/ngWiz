@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 
+import { AngularCliCommand } from "../../models/angular-cli-command.interface";
 @Component({
   selector: 'app-new',
   templateUrl: './new.component.html',
@@ -7,17 +8,20 @@ import { Component, Input } from '@angular/core';
 })
 export class NewComponent {
 
+  @Output() sendCommand = new EventEmitter<AngularCliCommand>();
+  command: AngularCliCommand;
   name: string;
-  @Input() rootFolder: string;
 
   isNameValid(): boolean {
     return !!this.name;
   }
   createNewProject(){
-    const request = {
-      name: this.name,
-      rootFolder: this.rootFolder
+    this.command = {
+      name: 'new',
+      params: [
+        {name: this.name}
+      ]
     }
-    console.log('request', request);
+    this.sendCommand.emit(this.command);
   }
 }
