@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter } from '@angular/core';
 
 import { AngularClass } from '../../models/angular-class.enum';
 import { AngularClassOptions } from '../../models/angular-class-options.interface';
-import { AngularCliCommand } from '../../models/angular-cli-command.interface'
+import { AngularCliCommand } from '../../models/angular-cli-command.interface';
 
 @Component({
   selector: 'app-generate',
@@ -13,7 +13,7 @@ export class GenerateComponent {
 
   @Output() sendCommand = new EventEmitter<AngularCliCommand>();
   command: AngularCliCommand;
-  name = 'Name';
+  name: string;
   type = AngularClass.Component;
   optionalTypes: AngularClassOptions[] = [
     {id: AngularClass.Component, displayName: 'Component'},
@@ -27,7 +27,7 @@ export class GenerateComponent {
         {name: this.name},
         {type: +this.type},
       ]
-    }
+    };
 
     this.sendCommand.emit(this.command);
   }

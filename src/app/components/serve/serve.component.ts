@@ -1,4 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
+
 import { AngularCliCommand } from '../../models/angular-cli-command.interface';
 
 @Component({
