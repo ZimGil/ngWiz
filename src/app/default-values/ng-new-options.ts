@@ -1,4 +1,4 @@
-import { NgOptions } from './../models/angular-options';
+import { NgOptions } from '../models/angular-options';
 import { AngularCommandOptions } from "../models/angular-command-options.interface";
 
 export class NgNewOptions implements NgOptions {

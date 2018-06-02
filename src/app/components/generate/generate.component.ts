@@ -3,7 +3,7 @@ import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { AngularClass } from '../../models/angular-class.enum';
 import { AngularClassOptions } from '../../models/angular-class-options.interface';
 import { AngularCliCommand } from '../../models/angular-cli-command.interface';
-import { NgOptions } from './../../models/angular-options';
+import { NgOptions } from '../../models/angular-options';
 import { AngularCommandOptions } from '../../models/angular-command-options.interface';
 import { NgGenerateComponentOptions } from '../../default-values/ng-generate-component-options';
 import { NgGenerateServiceOptions } from '../../default-values/ng-generate-service-options';
@@ -37,10 +37,10 @@ export class GenerateComponent implements OnInit {
 
   changeType(type: AngularClass): void {
     this.previousName = <string>this.options.mandatoryArgs.name;
-    this.options = this.NgOptionsFactory(type);
+    this.options = this.ngOptionsFactory(type);
   }
 
-  NgOptionsFactory(type: AngularClass): NgOptions {
+  ngOptionsFactory(type: AngularClass): NgOptions {
     switch (+type) {
       case AngularClass.component:
         return new NgGenerateComponentOptions(this.previousName);

@@ -1,6 +1,6 @@
-import { NgOptions } from './../models/angular-options';
-import { AngularCommandOptions } from './../models/angular-command-options.interface';
-import { AngularClass } from './../models/angular-class.enum';
+import { NgOptions } from '../models/angular-options';
+import { AngularCommandOptions } from '../models/angular-command-options.interface';
+import { AngularClass } from '../models/angular-class.enum';
 
 export class NgGenerateComponentOptions implements NgOptions {
 

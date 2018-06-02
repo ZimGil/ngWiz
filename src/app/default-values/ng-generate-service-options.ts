@@ -1,4 +1,4 @@
-import { AngularClass } from './../models/angular-class.enum';
+import { AngularClass } from '../models/angular-class.enum';
 import { AngularCommandOptions } from "../models/angular-command-options.interface";
 import { NgOptions } from "../models/angular-options";
 

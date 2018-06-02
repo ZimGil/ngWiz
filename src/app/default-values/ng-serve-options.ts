@@ -1,4 +1,4 @@
-import { NgOptions } from './../models/angular-options';
+import { NgOptions } from '../models/angular-options';
 
 export class NgserveOptions implements NgOptions {
     mandatoryArgs = {
