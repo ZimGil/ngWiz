@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 
 import { AngularClass } from '../../models/angular-class.enum';
 import { AngularClassOptions } from '../../models/angular-class-options.interface';
+import { AngularCliCommand } from '../../models/angular-cli-command.interface';
 
 @Component({
   selector: 'app-generate',
@@ -10,7 +11,9 @@ import { AngularClassOptions } from '../../models/angular-class-options.interfac
 })
 export class GenerateComponent {
 
-  name = 'Name';
+  @Output() sendCommand = new EventEmitter<AngularCliCommand>();
+  command: AngularCliCommand;
+  name: string;
   type = AngularClass.Component;
   optionalTypes: AngularClassOptions[] = [
     {id: AngularClass.Component, displayName: 'Component'},
@@ -18,11 +21,14 @@ export class GenerateComponent {
   ];
 
   generateAngularClass(): void {
-    const request = {
-      name: this.name,
-      type: +this.type
-    }
+    this.command = {
+      name: 'generate',
+      params: [
+        {name: this.name},
+        {type: +this.type},
+      ]
+    };
 
-    console.log('request', request);
+    this.sendCommand.emit(this.command);
   }
 }
