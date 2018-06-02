@@ -1,4 +1,4 @@
 export enum AngularClass {
-    Component = 0,
-    Service = 1
+    component = 0,
+    service = 1
   }

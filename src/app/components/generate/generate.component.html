@@ -1,12 +1,34 @@
 <h1>Generate</h1>
-<div>Name & Type</div>
 
-<input type="text" [(ngModel)]="name" placeholder="Name">
+<div>Name</div>
+<input type="text" [(ngModel)]="options.mandatoryArgs.name">
 
-<select [(ngModel)]="type">
-    <option *ngFor="let optionalType of optionalTypes" [value]="optionalType.id">
-      {{ optionalType.displayName }}
+<div>Type</div>
+<select [(ngModel)]="options.mandatoryArgs.type" (change)="changeType($event.target.value)">
+  <option
+    *ngFor="let optionalType of optionalTypes"
+    [value]="optionalType.id">
+     {{ optionalType.displayName }}
   </option>
 </select>
 
-<button (click)="generateAngularClass()" [disabled]="!name">Generate</button>
+<div *ngIf="options.mandatoryArgs.type == angularClass.component">
+  <label>
+    <input type="checkbox" [(ngModel)]="options.optionalFlags.inLineTemplate.isActive">
+    <span>in-line template</span>
+  </label>
+</div>
+<div *ngIf="options.mandatoryArgs.type == angularClass.component">
+  <label>
+    <input type="checkbox" [(ngModel)]="options.optionalFlags.inLineStyle.isActive">
+    <span>in-line style</span>
+  </label>
+</div>
+
+<div>
+  <button
+    (click)="generateAngularClass()"
+    [disabled]="!options.mandatoryArgs.name">
+    Generate
+  </button>
+</div>
