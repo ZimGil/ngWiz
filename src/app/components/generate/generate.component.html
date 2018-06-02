@@ -1,7 +1,7 @@
 <h1>Generate</h1>
 <div>Name & Type</div>
 
-<input type="text" [(ngModel)]="name">
+<input type="text" [(ngModel)]="name" placeholder="Name">
 
 <select [(ngModel)]="type">
     <option *ngFor="let optionalType of optionalTypes" [value]="optionalType.id">
@@ -9,4 +9,4 @@
   </option>
 </select>
 
-<button (click)="generateAngularClass()">Generate</button>
+<button (click)="generateAngularClass()" [disabled]="!name">Generate</button>

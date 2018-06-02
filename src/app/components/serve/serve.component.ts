@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
+
+import { AngularCliCommand } from '../../models/angular-cli-command.interface';
 
 @Component({
   selector: 'app-serve',
@@ -10,19 +12,22 @@ export class ServeComponent {
   private readonly MINIMUM_PORT = 1000;
   private readonly MAXIMUM_PORT = 99999;
 
-  rootFolder = "C:\\Development";
+  @Output() sendCommand = new EventEmitter<AngularCliCommand>();
+  command: AngularCliCommand;
   hostname = "localhost";
   port = 4200;
   isOpen = true;
 
   runServer(): void {
-    const request = {
-      hostname: this.hostname,
-      port: this.port,
-      isOpen: this.isOpen,
-      rootFolder: this.rootFolder
+    this.command = {
+      name: 'serve',
+      params: [
+        {hostname: this.hostname},
+        {port: this.port},
+        {isOpen: this.isOpen}
+      ]
     }
-    console.log('request: ', request);
+    this.sendCommand.emit(this.command);
   }
 
   isPortValid(): boolean {
