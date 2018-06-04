@@ -9,7 +9,7 @@
         <input 
         *ngIf="options.optionalFlags.host.isActive"
         type="text" 
-        [(ngModel)]="options.optionalFlags.host.params">
+        [(ngModel)]="options.optionalFlags.host.value">
     </label>
     <label>
         <input
@@ -19,7 +19,7 @@
         <input
             *ngIf="options.optionalFlags.port.isActive"
             type="text"
-            [(ngModel)]="options.optionalFlags.port.params">
+            [(ngModel)]="options.optionalFlags.port.value">
     </label>
     <label>
             <input type="checkbox" [(ngModel)]="options.optionalFlags.open.isActive">

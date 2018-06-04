@@ -25,8 +25,8 @@ export class NgGenerateServiceOptions implements NgOptions {
 
             if (option.isActive) {
                 command.push(option.flag);
-                if (option.params) {
-                    command.push(option.params.toString());
+                if (option.value) {
+                    command.push(option.value.toString());
                 }
             }  
         })

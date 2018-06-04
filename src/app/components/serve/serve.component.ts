@@ -22,12 +22,12 @@ export class ServeComponent {
   }
 
   isPortValid(): boolean {
-    const port = this.options.optionalFlags.port.params;
+    const port = this.options.optionalFlags.port.value;
     return port >= this.MINIMUM_PORT && port <= this.MAXIMUM_PORT;
   }
 
   isHostnameValid(): boolean {
-    return !!this.options.optionalFlags.host.params;
+    return !!this.options.optionalFlags.host.value;
   }
 
   isAllInputsValid(): boolean {

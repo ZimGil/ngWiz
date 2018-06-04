@@ -13,13 +13,13 @@ export class NgGenerateComponentOptions implements NgOptions {
         inLineTemplate: {
             name: 'inline-template',
             isActive: false,
-            params: null,
+            value: null,
             flag: '-t'
         },
         inLineStyle: {
             name: 'inline-style',
             isActive: false,
-            params: null,
+            value: null,
             flag: '-s'
         }
     }
@@ -37,8 +37,8 @@ export class NgGenerateComponentOptions implements NgOptions {
 
             if (option.isActive) {
                 command.push(option.flag);
-                if (option.params) {
-                    command.push(option.params.toString());
+                if (option.value) {
+                    command.push(option.value.toString());
                 }
             }  
         })

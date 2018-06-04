@@ -8,19 +8,19 @@ export class NgserveOptions implements NgOptions {
         host: {
             name: 'host',
             isActive: false,
-            params: 'localhost',
+            value: 'localhost',
             flag: '--host'
         },
         port: {
             name: 'port',
             isActive: false,
-            params: 4200,
+            value: 4200,
             flag: '--port'
         },
         open: {
             name: 'open',
             isActive: false,
-            params: null,
+            value: null,
             flag: '--open'
         }
     }
@@ -33,8 +33,8 @@ export class NgserveOptions implements NgOptions {
 
             if (option.isActive) {
                 command.push(option.flag);
-                if (option.params) {
-                    command.push(option.params.toString());
+                if (option.value) {
+                    command.push(option.value.toString());
                 }
             }  
         })
