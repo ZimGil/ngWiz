@@ -1,9 +1,32 @@
 <div>Hostname / IP</div>
 
-<input type="text" [(ngModel)]="hostname">
-:
-<input type="text" [(ngModel)]="port">
-<input type="checkbox" [(ngModel)]="isOpen">
+<label>
+    <input 
+        type="checkbox"
+        [(ngModel)]="options.optionalFlags.host.isActive">
+    <span>Add Hoatname </span>
+    <input 
+    *ngIf="options.optionalFlags.host.isActive"
+    type="text" 
+    [(ngModel)]="options.optionalFlags.host.value">
+</label>
+<label>
+    <input
+        type="checkbox"
+        [(ngModel)]="options.optionalFlags.port.isActive">
+    <span>Add Port </span>
+    <input
+        *ngIf="options.optionalFlags.port.isActive"
+        type="text"
+        [(ngModel)]="options.optionalFlags.port.value">
+</label>
+<label>
+        <input type="checkbox" [(ngModel)]="options.optionalFlags.open.isActive">
+    <span>Open</span>
+</label>
 
-
-<button (click)="runServer()" [disabled]="!isAllInputsValid()">Run Server</button>
+<button
+    (click)="runServer()"
+    [disabled]="!isAllInputsValid()">
+        Run Server
+</button>

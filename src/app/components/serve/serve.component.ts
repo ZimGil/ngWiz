@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 
 import { AngularCliCommand } from '../../models/angular-cli-command.interface';
+import { NgserveOptions } from '../../default-values/ng-serve-options';
 
 @Component({
   selector: 'app-serve',
@@ -12,30 +13,21 @@ export class ServeComponent {
   private readonly MINIMUM_PORT = 1000;
   private readonly MAXIMUM_PORT = 99999;
 
-  @Output() sendCommand = new EventEmitter<AngularCliCommand>();
+  @Output() sendCommand = new EventEmitter<string>();
   command: AngularCliCommand;
-  hostname = "localhost";
-  port = 4200;
-  isOpen = true;
+  options = new NgserveOptions();
 
   runServer(): void {
-    this.command = {
-      name: 'serve',
-      params: [
-        {hostname: this.hostname},
-        {port: this.port},
-        {isOpen: this.isOpen}
-      ]
-    }
-    this.sendCommand.emit(this.command);
+    this.sendCommand.emit(this.options.createCommandString());
   }
 
   isPortValid(): boolean {
-    return this.port >= this.MINIMUM_PORT && this.port <= this.MAXIMUM_PORT;
+    const port = this.options.optionalFlags.port.value;
+    return port >= this.MINIMUM_PORT && port <= this.MAXIMUM_PORT;
   }
 
   isHostnameValid(): boolean {
-    return !!this.hostname;
+    return !!this.options.optionalFlags.host.value;
   }
 
   isAllInputsValid(): boolean {

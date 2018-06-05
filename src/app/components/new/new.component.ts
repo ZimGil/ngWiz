@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 
 import { AngularCliCommand } from "../../models/angular-cli-command.interface";
+import { NgNewOptions } from '../../default-values/ng-new-options';
 @Component({
   selector: 'app-new',
   templateUrl: './new.component.html',
@@ -8,20 +9,14 @@ import { AngularCliCommand } from "../../models/angular-cli-command.interface";
 })
 export class NewComponent {
 
-  @Output() sendCommand = new EventEmitter<AngularCliCommand>();
+  @Output() sendCommand = new EventEmitter<string>();
   command: AngularCliCommand;
-  name: string;
+  options = new NgNewOptions();
 
   isNameValid(): boolean {
-    return !!this.name;
+    return !!this.options.mandatoryArgs.name;
   }
   createNewProject(){
-    this.command = {
-      name: 'new',
-      params: [
-        {name: this.name}
-      ]
-    }
-    this.sendCommand.emit(this.command);
+    this.sendCommand.emit(this.options.createCommandString());
   }
 }
