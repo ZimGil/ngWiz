@@ -23,10 +23,8 @@
   </label>
 </div>
 
-<div>
-  <button
-    (click)="generateAngularClass()"
-    [disabled]="!options.mandatoryArgs.name">
-    Generate
-  </button>
-</div>
+<button
+  (click)="generateAngularClass()"
+  [disabled]="!options.mandatoryArgs.name">
+  Generate
+</button>

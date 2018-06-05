@@ -1,18 +1,17 @@
 <h4>Create a New Project</h4>
 <input type="text" [(ngModel)]="options.mandatoryArgs.name">
 
-<div>
-    <label>
-        <input type="checkbox" [(ngModel)]="options.optionalFlags.inLineTemplate.isActive">
-        <span>in-line template</span>
-    </label>
-    <label>
-        <input type="checkbox" [(ngModel)]="options.optionalFlags.inLineStyle.isActive">
-        <span>in-line style</span>
-    </label>
-    <label>
-        <input type="checkbox" [(ngModel)]="options.optionalFlags.routing.isActive">
-        <span>routing</span>
-    </label>
-</div>
+<label>
+    <input type="checkbox" [(ngModel)]="options.optionalFlags.inLineTemplate.isActive">
+    <span>in-line template</span>
+</label>
+<label>
+    <input type="checkbox" [(ngModel)]="options.optionalFlags.inLineStyle.isActive">
+    <span>in-line style</span>
+</label>
+<label>
+    <input type="checkbox" [(ngModel)]="options.optionalFlags.routing.isActive">
+    <span>routing</span>
+</label>
+
 <button (click)="createNewProject()" [disabled]="!isNameValid()">Create</button>
