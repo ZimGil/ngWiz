@@ -25,9 +25,21 @@ app.get('/', function(req, res) {
 });
 
 app.post('/command', function(req, res) {
-  console.log('\n########################################################################################\n');
-  const keys = Object.keys(req.body);
-  keys.forEach( key => console.log(key, req.body[key]));
+  if (req.body.folder) {       // to make sure folder is received 
+    process.chdir(req.body.folder);
+  }
+
+  commandEvent = childProcess.exec(req.body.command, (err, stdout, stderr) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+  });
+
+  commandEvent.stdout.on('data', function(data) {
+    console.log(data); 
+  });
+
   res.send('thanks for this data');  
 });
 
