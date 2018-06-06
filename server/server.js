@@ -40,6 +40,10 @@ app.post('/command', function(req, res) {
     console.log(data); 
   });
 
+  commandEvent.stdout.on('close', function() {
+  console.log("###################################################################################");
+  })
+  
   res.send('thanks for this data');  
 });
 
