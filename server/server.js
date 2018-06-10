@@ -25,18 +25,18 @@ app.get('/', function(req, res) {
 });
 
 app.post('/command', function(req, res) {
-  if (req.body.folder) {       // to make sure folder is received 
+  if (req.body.folder) {
     process.chdir(req.body.folder);
   }
 
-  commandEvent = childProcess.exec(req.body.command, (err, stdout, stderr) => {
+  const commandEvent = childProcess.exec(req.body.command, (err, stdout, stderr) => {
     if (err) {
       console.log(err);
       return;
     }
   });
 
-  commandEvent.stdout.on('data', function(data) {
+  commandEvent.stdout.on('data', (data)=> {
     console.log(data); 
   });
 
