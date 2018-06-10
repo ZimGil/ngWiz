@@ -9,7 +9,7 @@ const PORT = 3000;
 
 let isOpenBrowser;
 
-process.argv.forEach(function (val, index, array) {
+process.argv.forEach((val, index, array)=> {
   if (val === '-o') {
     isOpenBrowser = true;
   }
@@ -20,11 +20,11 @@ app.use(express.static(STATIC_FILES_LOCATION));
 app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded()); // to support URL-encoded bodies
 
-app.get('/', function(req, res) {
+app.get('/', (req, res)=> {
   res.sendFile(`${STATIC_FILES_LOCATION}/index.html`);
 });
 
-app.post('/command', function(req, res) {
+app.post('/command', (req, res)=> {
   if (req.body.folder) {
     process.chdir(req.body.folder);
   }
@@ -40,7 +40,7 @@ app.post('/command', function(req, res) {
     console.log(data); 
   });
 
-  commandEvent.stdout.on('close', function() {
+  commandEvent.stdout.on('close', ()=> {
   console.log("###################################################################################");
   })
   
