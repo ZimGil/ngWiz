@@ -24,27 +24,31 @@ app.get('/', (req, res)=> {
   res.sendFile(`${STATIC_FILES_LOCATION}/index.html`);
 });
 
-app.post('/command', (req, res)=> {
-  if (req.body.folder) {
+app.post('/command', (req, res) => {
+  try {
     process.chdir(req.body.folder);
-  }
 
-  const commandEvent = childProcess.exec(req.body.command, (err, stdout, stderr) => {
-    if (err) {
-      console.log(err);
-      return;
-    }
-  });
+    const commandEvent = childProcess.exec(req.body.command, (err, stdout, stderr) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+    });
 
-  commandEvent.stdout.on('data', (data)=> {
-    console.log(data); 
-  });
-
-  commandEvent.stdout.on('close', ()=> {
-  console.log("###################################################################################");
-  })
+    commandEvent.stdout.on('data', (data)=> {
+      console.log(data); 
+    });
   
-  res.send('thanks for this data');  
+    commandEvent.stdout.on('close', ()=> {
+    console.log("###################################################################################");
+    })
+    
+    res.send('thanks for this data');  
+  }
+  catch(error) {
+    console.log(error);
+    res.status(400).end();
+  }
 });
 
 app.listen(PORT, () => {
