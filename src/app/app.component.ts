@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 
 import { AngularCliCommand } from './models/angular-cli-command.interface';
-import { CommandService } from './command.service';
+import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

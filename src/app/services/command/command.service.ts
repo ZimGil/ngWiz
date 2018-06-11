@@ -1,7 +1,7 @@
-import { CommandRequest } from './models/angular-command-request';
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+import { CommandRequest } from '../../models/angular-command-request';
 
 @Injectable({
   providedIn: 'root'
