@@ -18,7 +18,6 @@ export class NewComponent {
   isNameValid(): boolean {
     const name = <string>this.options.mandatoryArgs.name;
     if (name) {
-      console.log(name.match(this.PROJECT_NAME_REGEX));
       return !!name.match(this.PROJECT_NAME_REGEX);
     }
     return false;
