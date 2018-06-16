@@ -25,6 +25,6 @@
 
 <button
   (click)="generateAngularClass()"
-  [disabled]="!options.mandatoryArgs.name">
+  [disabled]="!isNameValid()">
   Generate
 </button>
