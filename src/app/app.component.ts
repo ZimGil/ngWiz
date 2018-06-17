@@ -11,7 +11,7 @@ import { CommandRequest } from './models/angular-command-request';
 })
 export class AppComponent {
   title = 'Angular CLI to UI';
-  rootFolder = "C:\\";
+  rootFolder = 'C:\\';
 
   constructor(private commandService: CommandService) {}
 

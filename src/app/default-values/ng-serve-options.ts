@@ -2,7 +2,7 @@ import { NgOptions } from '../models/angular-options';
 
 export class NgserveOptions implements NgOptions {
     mandatoryArgs = {
-    }
+    };
 
     optionalFlags = {
         host: {
@@ -23,10 +23,10 @@ export class NgserveOptions implements NgOptions {
             value: null,
             flag: '--open'
         }
-    }
+    };
 
     createCommandString(): string {
-        let command = ['ng serve'];
+        const command = ['ng serve'];
 
         Object.keys(this.optionalFlags).forEach(optionName => {
             const option = this.optionalFlags[optionName];
@@ -36,8 +36,8 @@ export class NgserveOptions implements NgOptions {
                 if (option.value) {
                     command.push(option.value.toString());
                 }
-            }  
-        })
+            }
+        });
         return command.join(' ');
     }
 }

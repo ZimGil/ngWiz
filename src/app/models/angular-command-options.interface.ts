@@ -4,5 +4,5 @@ export interface AngularCommandOptions {
         isActive: boolean;
         value: string | number;
         flag: string;
-    }
+    };
 }

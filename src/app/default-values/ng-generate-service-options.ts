@@ -1,6 +1,5 @@
 import { AngularClass } from '../models/angular-class.enum';
-import { AngularCommandOptions } from "../models/angular-command-options.interface";
-import { NgOptions } from "../models/angular-options";
+import { NgOptions } from '../models/angular-options';
 
 // No options for Service Generation yet
 export class NgGenerateServiceOptions implements NgOptions {
@@ -8,17 +7,17 @@ export class NgGenerateServiceOptions implements NgOptions {
     mandatoryArgs = {
         name: null,
         type: AngularClass.service
-    }
+    };
 
-    optionalFlags = {}
+    optionalFlags = {};
 
     constructor(name: string = null) {
         this.mandatoryArgs.name = name;
     }
-    
+
     createCommandString(): string {
 
-        let command = ['ng generate', AngularClass[this.mandatoryArgs.type], this.mandatoryArgs.name];
+        const command = ['ng generate', AngularClass[this.mandatoryArgs.type], this.mandatoryArgs.name];
 
         Object.keys(this.optionalFlags).forEach(optionName => {
             const option = this.optionalFlags[optionName];
@@ -28,8 +27,8 @@ export class NgGenerateServiceOptions implements NgOptions {
                 if (option.value) {
                     command.push(option.value.toString());
                 }
-            }  
-        })
+            }
+        });
 
         return command.join(' ');
     }
