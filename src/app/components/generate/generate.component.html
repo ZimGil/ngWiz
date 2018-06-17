@@ -25,6 +25,10 @@
 
 <button
   (click)="generateAngularClass()"
-  [disabled]="!options.mandatoryArgs.name">
+  [disabled]="!isNameValid()">
   Generate
 </button>
+<div *ngIf="!isNameValid()">
+    Name must start with a letter, and must contain only alphanumeric characters or dashes.
+    When adding a dash the segment after the dash must also start with a letter.    
+</div>

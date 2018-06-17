@@ -4,7 +4,6 @@ import { AngularClass } from '../../models/angular-class.enum';
 import { AngularClassOptions } from '../../models/angular-class-options.interface';
 import { AngularCliCommand } from '../../models/angular-cli-command.interface';
 import { NgOptions } from '../../models/angular-options';
-import { AngularCommandOptions } from '../../models/angular-command-options.interface';
 import { NgGenerateComponentOptions } from '../../default-values/ng-generate-component-options';
 import { NgGenerateServiceOptions } from '../../default-values/ng-generate-service-options';
 
@@ -16,6 +15,8 @@ import { NgGenerateServiceOptions } from '../../default-values/ng-generate-servi
 export class GenerateComponent implements OnInit {
 
   @Output() sendCommand = new EventEmitter<string>();
+
+  private readonly HTML_SELECTOR_REGEX = /^[a-zA-Z][0-9a-zA-Z]*(?:-[a-zA-Z][0-9a-zA-Z]*)*$/;
 
   command: AngularCliCommand;
   options: NgOptions;
@@ -47,5 +48,13 @@ export class GenerateComponent implements OnInit {
       case AngularClass.service:
         return new NgGenerateServiceOptions(this.previousName);
     }
+  }
+
+  isNameValid(): boolean {
+    const name = <string>this.options.mandatoryArgs.name;
+    if (name) {
+      return !!name.match(this.HTML_SELECTOR_REGEX);
+    }
+    return false;
   }
 }
