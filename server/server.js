@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const compression = require('compression');
 const childProcess = require('child_process');
+const fs = require('fs');
 
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '..', '/dist/Angular-cli-ui');
@@ -27,6 +28,14 @@ app.use(function(req, res, next) {
 
 app.get('/', (req, res) => {
   res.sendFile(`${STATIC_FILES_LOCATION}/index.html`);
+});
+
+app.get('/isAngularProject', (req, res) => {
+  const file = 'angular.json';
+  
+  fs.access(file, fs.constants.F_OK, (err) => {
+    res.send(err ? false : true);
+  });
 });
 
 app.post('/command', (req, res) => {

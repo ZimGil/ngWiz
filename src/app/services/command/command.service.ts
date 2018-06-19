@@ -13,6 +13,10 @@ export class CommandService {
 
   constructor(private http: HttpClient) { }
 
+  isAngularProject() {
+    return this.http.get(`${this.BASE_URL}:${this.PORT}/isAngularProject`);
+  }
+
   sendCommand(command: CommandRequest) {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
