@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { CommandRequest } from '../../models/angular-command-request';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

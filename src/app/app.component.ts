@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
 
   checkAngularJson(): void {
     this.commandService.isAngularProject()
-    .subscribe(response => this.isAngularProject = !!response);
+      .subscribe(response => this.isAngularProject = !!response);
   }
 
   sendCommand(userCommand: string): void {
