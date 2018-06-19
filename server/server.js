@@ -30,11 +30,11 @@ app.get('/', (req, res) => {
   res.sendFile(`${STATIC_FILES_LOCATION}/index.html`);
 });
 
-app.get('/checkDir', (req, res) => {
+app.get('/isAngularProject', (req, res) => {
   const file = 'angular.json';
   
   fs.access(file, fs.constants.F_OK, (err) => {
-    res.send({"isFileExist": err ? "false" : "true"});
+    res.send(err ? false : true);
   });
 });
 

@@ -4,8 +4,12 @@
 
 <input type="text" [(ngModel)]="rootFolder">
 
-<app-serve (sendCommand)="sendCommand($event)"></app-serve>
+<app-new
+    *ngIf="!isAngularProject"
+    (sendCommand)="sendCommand($event)">
+</app-new>
 
-<app-new (sendCommand)="sendCommand($event)"></app-new>
-
-<app-generate (sendCommand)="sendCommand($event)"></app-generate>
+<ng-container *ngIf="isAngularProject">
+    <app-serve (sendCommand)="sendCommand($event)"></app-serve>
+    <app-generate (sendCommand)="sendCommand($event)"></app-generate>
+</ng-container>
