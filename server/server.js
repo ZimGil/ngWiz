@@ -40,8 +40,6 @@ app.get('/isAngularProject', (req, res) => {
 
 app.post('/command', (req, res) => {
   try {
-    process.chdir(req.body.folder);
-
     const commandEvent = childProcess.exec(req.body.command, (err, stdout, stderr) => {
       if (err) {
         console.log(err);
@@ -64,6 +62,11 @@ app.post('/command', (req, res) => {
     res.status(400).end();
   }
 });
+
+app.post('/changeDir', (req, res) => {
+  process.chdir(req.body.folder);
+  res.send(`Working directory chaged to: ${process.cwd()}`);
+})
 
 app.listen(PORT, () => {
   console.clear();
