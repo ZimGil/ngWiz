@@ -1,9 +1,5 @@
 <h1>Angular CLI to UI</h1>
 
-<div>Project Root Folder</div>
-
-<input type="text" [(ngModel)]="rootFolder">
-
 <app-new
     *ngIf="!isAngularProject"
     (sendCommand)="sendCommand($event)">
