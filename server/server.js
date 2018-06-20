@@ -53,6 +53,11 @@ app.post('/command', (req, res) => {
   
     commandEvent.stdout.on('close', () => {
       console.log("###################################################################################");
+      if (req.body.command.toString().includes(' new ')){
+        const commandValues = req.body.command.toString().split(' ');
+        const projectName = commandValues[2];
+        process.chdir(`${process.cwd()}\\${projectName}`);
+      }
     })
     
     res.send('thanks for this data');  
