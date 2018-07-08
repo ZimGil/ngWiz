@@ -40,8 +40,6 @@ app.get('/isAngularProject', (req, res) => {
 
 app.post('/command', (req, res) => {
   try {
-    process.chdir(req.body.folder);
-
     const commandEvent = childProcess.exec(req.body.command, (err, stdout, stderr) => {
       if (err) {
         console.log(err);
@@ -55,6 +53,11 @@ app.post('/command', (req, res) => {
   
     commandEvent.stdout.on('close', () => {
       console.log("###################################################################################");
+      if (req.body.command.toString().includes(' new ')){
+        const commandValues = req.body.command.toString().split(' ');
+        const projectName = commandValues[2];
+        process.chdir(`${process.cwd()}\\${projectName}`);
+      }
     })
     
     res.send('thanks for this data');  
@@ -64,6 +67,12 @@ app.post('/command', (req, res) => {
     res.status(400).end();
   }
 });
+
+//this function will help us in development using Postman to change the working directory
+app.post('/DEVchangeDir', (req, res) => {
+  process.chdir(req.body.folder);
+  res.send(`Working directory chaged to: ${process.cwd()}`);
+})
 
 app.listen(PORT, () => {
   console.clear();

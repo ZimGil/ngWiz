@@ -11,22 +11,21 @@ import { CommandRequest } from './models/angular-command-request';
 })
 export class AppComponent implements OnInit {
   title = 'Angular CLI to UI';
-  rootFolder = 'C:\\';
   isAngularProject: boolean;
 
   constructor(private commandService: CommandService) {}
 
   ngOnInit() {
-    this.checkAngularJson();
+    this.checkAngularProject();
   }
 
-  checkAngularJson(): void {
+  checkAngularProject(): void {
     this.commandService.isAngularProject()
       .subscribe(response => this.isAngularProject = !!response);
   }
 
   sendCommand(userCommand: string): void {
-    const request = new CommandRequest(userCommand, this.rootFolder);
+    const request = new CommandRequest(userCommand);
     this.commandService.sendCommand(request)
       .subscribe((response) => console.log('response', response));
   }
