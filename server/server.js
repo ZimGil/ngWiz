@@ -9,12 +9,52 @@ const STATIC_FILES_LOCATION = path.join(__dirname, '..', '/dist/Angular-cli-ui')
 const PORT = 3000;
 
 let isOpenBrowser;
+class ProcessRunner {
+  constructor() {
+    this.currentProcesses = {};
+  }
+
+  static guid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+  }
+
+  run(fizz) {
+    this.currentProcesses[fizz.id] = {
+      process: null,
+      status: 'working'
+    };
+    this.currentProcesses[fizz.id].process = childProcess.exec(fizz.params, fizz.callback);
+
+    this.currentProcesses[fizz.id].process.stdout.on('data', (data) => {
+      console.log(data);
+    });
+  
+    this.currentProcesses[fizz.id].process.stdout.on('close', () => {
+      console.log("###################################################################################");
+      if (fizz.params.toString().includes(' new ')){
+        const commandValues = fizz.params.toString().split(' ');
+        const projectName = commandValues[2];
+        process.chdir(`${process.cwd()}\\${projectName}`);
+      }
+
+      this.currentProcesses[fizz.id].status = 'done';
+    })
+  }
+}
+
 
 process.argv.forEach((val, index, array) => {
   if (val === '-o') {
     isOpenBrowser = true;
   }
 });
+
+const processRunner = new ProcessRunner();
 
 app.use(compression());
 app.use(express.static(STATIC_FILES_LOCATION));
@@ -38,29 +78,35 @@ app.get('/isAngularProject', (req, res) => {
   });
 });
 
+app.get('/status', (req, res) => {
+  const id = req.query.id;
+  console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%: ', id);
+
+  if (processRunner.currentProcesses[id]) {
+    const processStatus = processRunner.currentProcesses[id].status;
+    res.send(processStatus);
+  } else {
+    res.sendStatus(404);
+  }
+});
+
 app.post('/command', (req, res) => {
   try {
-    const commandEvent = childProcess.exec(req.body.command, (err, stdout, stderr) => {
+    const callback = (err, stdout, stderr) => {
       if (err) {
         console.log(err);
         return;
       }
-    });
+    }
 
-    commandEvent.stdout.on('data', (data) => {
-      console.log(data); 
-    });
-  
-    commandEvent.stdout.on('close', () => {
-      console.log("###################################################################################");
-      if (req.body.command.toString().includes(' new ')){
-        const commandValues = req.body.command.toString().split(' ');
-        const projectName = commandValues[2];
-        process.chdir(`${process.cwd()}\\${projectName}`);
-      }
-    })
+    const bar = {
+      id: ProcessRunner.guid(),
+      callback: callback,
+      params: req.body.command
+    }
     
-    res.send('thanks for this data');  
+    processRunner.run(bar);
+    res.send(bar.id);  
   }
   catch(error) {
     console.log(error);
