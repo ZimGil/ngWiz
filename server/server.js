@@ -68,7 +68,8 @@ app.post('/command', (req, res) => {
   }
 });
 
-app.post('/changeDir', (req, res) => {
+//this function will help us in development using Postman to change the working directory
+app.post('/DEVchangeDir', (req, res) => {
   process.chdir(req.body.folder);
   res.send(`Working directory chaged to: ${process.cwd()}`);
 })
