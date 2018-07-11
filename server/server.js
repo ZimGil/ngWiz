@@ -11,7 +11,7 @@ const PORT = 3000;
 let isOpenBrowser;
 class ProcessRunner {
   constructor() {
-    this.currentProcesses = {};
+    this.runningProcesses = {};
   }
 
   static guid() {
@@ -23,30 +23,29 @@ class ProcessRunner {
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
   }
 
-  run(fizz) {
-    this.currentProcesses[fizz.id] = {
+  run(currentProcess) {
+    this.runningProcesses[currentProcess.id] = {
       process: null,
       status: 'working'
     };
-    this.currentProcesses[fizz.id].process = childProcess.exec(fizz.params, fizz.callback);
+    this.runningProcesses[currentProcess.id].process = childProcess.exec(currentProcess.params, currentProcess.callback);
 
-    this.currentProcesses[fizz.id].process.stdout.on('data', (data) => {
+    this.runningProcesses[currentProcess.id].process.stdout.on('data', (data) => {
       console.log(data);
     });
   
-    this.currentProcesses[fizz.id].process.stdout.on('close', () => {
+    this.runningProcesses[currentProcess.id].process.stdout.on('close', () => {
       console.log("###################################################################################");
-      if (fizz.params.toString().includes(' new ')){
-        const commandValues = fizz.params.toString().split(' ');
+      if (currentProcess.params.toString().includes(' new ')){
+        const commandValues = currentProcess.params.toString().split(' ');
         const projectName = commandValues[2];
         process.chdir(`${process.cwd()}\\${projectName}`);
       }
 
-      this.currentProcesses[fizz.id].status = 'done';
+      this.runningProcesses[currentProcess.id].status = 'done';
     })
   }
 }
-
 
 process.argv.forEach((val, index, array) => {
   if (val === '-o') {
@@ -82,9 +81,12 @@ app.get('/status', (req, res) => {
   const id = req.query.id;
   console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%: ', id);
 
-  if (processRunner.currentProcesses[id]) {
-    const processStatus = processRunner.currentProcesses[id].status;
-    res.send(processStatus);
+  if (processRunner.runningProcesses[id]) {
+    const processStatus = processRunner.runningProcesses[id].status;
+    res.send(`${processStatus}`);
+    if (!processRunner.runningProcesses[id].status) {
+      processRunner.runningProcesses[id] = null;
+    }
   } else {
     res.sendStatus(404);
   }
@@ -99,14 +101,14 @@ app.post('/command', (req, res) => {
       }
     }
 
-    const bar = {
+    const currentProcess = {
       id: ProcessRunner.guid(),
       callback: callback,
       params: req.body.command
     }
     
-    processRunner.run(bar);
-    res.send(bar.id);  
+    processRunner.run(currentProcess);
+    res.send(currentProcess.id);  
   }
   catch(error) {
     console.log(error);

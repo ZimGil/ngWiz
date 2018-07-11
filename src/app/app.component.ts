@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import { AngularCliCommand } from './models/angular-cli-command.interface';
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
 
@@ -27,6 +26,8 @@ export class AppComponent implements OnInit {
   sendCommand(userCommand: string): void {
     const request = new CommandRequest(userCommand);
     this.commandService.sendCommand(request)
-      .subscribe((response) => console.log('response', response));
+      .subscribe(response => {
+        console.log('response', response);
+      });
   }
 }

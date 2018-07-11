@@ -17,6 +17,10 @@ export class CommandService {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/isAngularProject`);
   }
 
+  isCommandDone(commandId: string) {
+    return this.http.get(`${this.BASE_URL}:${this.PORT}/status?id=${commandId}`);
+  }
+
   sendCommand(command: CommandRequest) {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
