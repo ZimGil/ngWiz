@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { interval } from 'rxjs';
+import { interval, Observable } from 'rxjs';
 
 import { AngularCliCommand } from '../../models/angular-cli-command.interface';
 import { NgNewOptions } from '../../default-values/ng-new-options';
@@ -19,6 +19,7 @@ export class NewComponent {
 
   @Output() sendCommand = new EventEmitter<string>();
   isAngularProject: boolean
+  isCommandDone: boolean
   command: AngularCliCommand;
   options = new NgNewOptions();
 
@@ -30,17 +31,11 @@ export class NewComponent {
     return false;
   }
 
-  checkIfCommandDone(commandId: string): boolean {
-    console.log('is command done (in function)', this.isAngularProject);
+  checkIfCommandDone(commandId: string): void {
     this.commandService.isCommandDone(commandId)
       .subscribe(response => {
-        if (response == 'working') {
-          return false;
-        } else if (response == 'done') {
-          return true;
-        }
+        this.isCommandDone = !!response;
       });
-    return false;
   }
 
   checkAngularProject(): void {
@@ -49,18 +44,19 @@ export class NewComponent {
   }
 
   createNewProject() {
-    let isCommandDone = false;
     const requrst = new CommandRequest(this.options.createCommandString());
     this.commandService.sendCommand(requrst)
       .subscribe(commandId => {
-        console.log(`response`, commandId);
-          interval(1000).subscribe(x => {
-            console.log('is command done (in while)', isCommandDone);
-            isCommandDone = this.checkIfCommandDone(commandId);
-          });
-        console.log('outof while');
+        const timedStatusCheck = interval(1000)
+        .subscribe(x => {
+          if (this.isCommandDone) {
+            console.log('done');
+            timedStatusCheck.unsubscribe();
+          } else {
+            this.checkIfCommandDone(commandId);
+          }
+        });
         this.checkAngularProject();
       });
-    // this.sendCommand.emit(this.options.createCommandString());
   }
 }

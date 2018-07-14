@@ -79,13 +79,14 @@ app.get('/isAngularProject', (req, res) => {
 
 app.get('/status', (req, res) => {
   const id = req.query.id;
-  console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%: ', id);
 
   if (processRunner.runningProcesses[id]) {
     const processStatus = processRunner.runningProcesses[id].status;
-    res.send(`${processStatus}`);
-    if (!processRunner.runningProcesses[id].status) {
+    if (processStatus == 'working') {
+      res.send(false);
+    } else if (processStatus == 'done') {
       processRunner.runningProcesses[id] = null;
+      res.send(true);
     }
   } else {
     res.sendStatus(404);
