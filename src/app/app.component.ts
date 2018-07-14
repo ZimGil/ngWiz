@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,7 @@ import { CommandRequest } from './models/angular-command-request';
 export class AppComponent implements OnInit {
   title = 'Angular CLI to UI';
   isAngularProject: boolean;
-  isCommandDone = false;
+  areRunningCommandsDone = {};
 
   constructor(private commandService: CommandService) {}
 
@@ -24,16 +25,32 @@ export class AppComponent implements OnInit {
       .subscribe(response => this.isAngularProject = !!response);
   }
 
-  sendCommand(userCommand: string): void {
-    const request = new CommandRequest(userCommand);
-    this.commandService.sendCommand(request)
+  checkIfCommandDone(commandId: string): void {
+    this.commandService.isCommandDone(commandId)
       .subscribe(response => {
-        console.log('response', response);
+        this.areRunningCommandsDone[commandId] = !!response;
       });
   }
 
-  changeCommandStatus(status: boolean): void {
-    this.isCommandDone = status;
+  sendCommand(userCommand: string): void {
+    const request = new CommandRequest(userCommand);
+    this.commandService.sendCommand(request)
+    .subscribe(commandId => {
+      console.log('started generating new project, ID:', commandId);
+      const timedStatusCheck = interval(1000)
+      .subscribe(x => {
+        if (this.areRunningCommandsDone[commandId]) {
+          console.log('done');
+          timedStatusCheck.unsubscribe();
+        } else {
+          this.checkIfCommandDone(commandId);
+        }
+      });
+      this.checkAngularProject();
+    });
+  }
+
+  changeAngularProjectStatus(): void {
     this.checkAngularProject();
   }
 }

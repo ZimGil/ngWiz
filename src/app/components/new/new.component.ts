@@ -17,7 +17,7 @@ export class NewComponent {
 
   private readonly PROJECT_NAME_REGEX = /^[a-zA-Z][0-9a-zA-Z]*(?:-[a-zA-Z][0-9a-zA-Z]*)*$/;
 
-  @Output() changeCommandStatus = new EventEmitter<boolean>();
+  @Output() changeAngularProjectStatus = new EventEmitter<void>();
   isCommandDone: boolean;
   isAngularProject: boolean;
   command: AngularCliCommand;
@@ -52,7 +52,7 @@ export class NewComponent {
         .subscribe(x => {
           if (this.isCommandDone) {
             console.log('done');
-            this.changeCommandStatus.emit(this.isCommandDone);
+            this.changeAngularProjectStatus.emit();
             timedStatusCheck.unsubscribe();
           } else {
             this.checkIfCommandDone(commandId);
