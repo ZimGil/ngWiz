@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
     const request = new CommandRequest(userCommand);
     this.commandService.sendCommand(request)
     .subscribe(commandId => {
-      console.log('started generating new project, ID:', commandId);
+      console.log('started working on command, ID:', commandId);
       const timedStatusCheck = interval(1000)
       .subscribe(x => {
         if (this.areRunningCommandsDone[commandId]) {
