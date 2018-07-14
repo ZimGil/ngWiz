@@ -11,6 +11,7 @@ import { CommandRequest } from './models/angular-command-request';
 export class AppComponent implements OnInit {
   title = 'Angular CLI to UI';
   isAngularProject: boolean;
+  isCommandDone = false;
 
   constructor(private commandService: CommandService) {}
 
@@ -29,5 +30,10 @@ export class AppComponent implements OnInit {
       .subscribe(response => {
         console.log('response', response);
       });
+  }
+
+  changeCommandStatus(status: boolean): void {
+    this.isCommandDone = status;
+    this.checkAngularProject();
   }
 }

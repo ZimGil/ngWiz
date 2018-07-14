@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { interval, Observable } from 'rxjs';
+import { interval } from 'rxjs';
 
 import { AngularCliCommand } from '../../models/angular-cli-command.interface';
 import { NgNewOptions } from '../../default-values/ng-new-options';
@@ -17,9 +17,9 @@ export class NewComponent {
 
   private readonly PROJECT_NAME_REGEX = /^[a-zA-Z][0-9a-zA-Z]*(?:-[a-zA-Z][0-9a-zA-Z]*)*$/;
 
-  @Output() sendCommand = new EventEmitter<string>();
-  isAngularProject: boolean
+  @Output() changeCommandStatus = new EventEmitter<boolean>();
   isCommandDone: boolean
+  isAngularProject: boolean
   command: AngularCliCommand;
   options = new NgNewOptions();
 
@@ -47,10 +47,12 @@ export class NewComponent {
     const requrst = new CommandRequest(this.options.createCommandString());
     this.commandService.sendCommand(requrst)
       .subscribe(commandId => {
+        console.log('started generating new project, ID:', commandId);
         const timedStatusCheck = interval(1000)
         .subscribe(x => {
           if (this.isCommandDone) {
             console.log('done');
+            this.changeCommandStatus.emit(this.isCommandDone);
             timedStatusCheck.unsubscribe();
           } else {
             this.checkIfCommandDone(commandId);
