@@ -18,8 +18,8 @@ export class NewComponent {
   private readonly PROJECT_NAME_REGEX = /^[a-zA-Z][0-9a-zA-Z]*(?:-[a-zA-Z][0-9a-zA-Z]*)*$/;
 
   @Output() changeCommandStatus = new EventEmitter<boolean>();
-  isCommandDone: boolean
-  isAngularProject: boolean
+  isCommandDone: boolean;
+  isAngularProject: boolean;
   command: AngularCliCommand;
   options = new NgNewOptions();
 
