@@ -26,7 +26,7 @@ class ProcessRunner {
   run(currentProcess) {
     this.runningProcesses[currentProcess.id] = {
       process: null,
-      status: 'working'
+      isDone: false
     };
     this.runningProcesses[currentProcess.id].process = childProcess.exec(currentProcess.params, currentProcess.callback);
 
@@ -42,7 +42,7 @@ class ProcessRunner {
         process.chdir(`${process.cwd()}\\${projectName}`);
       }
 
-      this.runningProcesses[currentProcess.id].status = 'done';
+      this.runningProcesses[currentProcess.id].isDone = true;
     })
   }
 }
@@ -81,12 +81,10 @@ app.get('/status', (req, res) => {
   const id = req.query.id;
 
   if (processRunner.runningProcesses[id]) {
-    const processStatus = processRunner.runningProcesses[id].status;
-    if (processStatus == 'working') {
-      res.send(false);
-    } else if (processStatus == 'done') {
+    const processStatus = processRunner.runningProcesses[id].isDone;
+    res.send(processStatus);
+    if (processStatus) {
       processRunner.runningProcesses[id] = null;
-      res.send(true);
     }
   } else {
     res.sendStatus(404);
