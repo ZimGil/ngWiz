@@ -49,8 +49,5 @@ export class AppComponent implements OnInit {
       this.checkAngularProject();
     });
   }
-
-  changeAngularProjectStatus(): void {
-    this.checkAngularProject();
-  }
+  
 }
