@@ -12,7 +12,10 @@ import { interval } from 'rxjs';
 export class AppComponent implements OnInit {
   title = 'Angular CLI to UI';
   isAngularProject: boolean;
-  areRunningCommandsDone = {};
+  runningCommands = {};
+  timedStatusCheck = interval(1000);
+  subscription = {};
+  
 
   constructor(private commandService: CommandService) {}
 
@@ -25,11 +28,34 @@ export class AppComponent implements OnInit {
       .subscribe(response => this.isAngularProject = !!response);
   }
 
-  checkIfCommandDone(commandId: string): void {
-    this.commandService.isCommandDone(commandId)
+  checkCommandStatus(commandId: string): void {
+    this.commandService.checkCommandStatus(commandId)
       .subscribe(response => {
-        this.areRunningCommandsDone[commandId] = !!response;
+        this.runningCommands[commandId] = response;
       });
+  }
+
+  commandStatusCheckingLoop(commandId: string): void {
+    if (this.runningCommands[commandId]) {
+      const status = this.runningCommands[commandId].status;
+
+      if (status == 'done') {
+        console.log('done');
+        this.checkAngularProject();
+        this.runningCommands[commandId] = null;
+        this.subscription[commandId].unsubscribe();
+        this.subscription[commandId] = null;
+      } else if (status == 'error') {
+        console.log('error')
+        this.subscription[commandId].unsubscribe();
+        this.subscription[commandId] = null;
+      } else if (status == 'working') {
+        console.log('working');
+        this.checkCommandStatus(commandId);
+      }
+    } else {
+      this.checkCommandStatus(commandId);
+    }
   }
 
   sendCommand(userCommand: string): void {
@@ -37,16 +63,8 @@ export class AppComponent implements OnInit {
     this.commandService.sendCommand(request)
     .subscribe(commandId => {
       console.log('started working on command, ID:', commandId);
-      const timedStatusCheck = interval(1000)
-      .subscribe(x => {
-        if (this.areRunningCommandsDone[commandId]) {
-          console.log('done');
-          timedStatusCheck.unsubscribe();
-        } else {
-          this.checkIfCommandDone(commandId);
-        }
-      });
-      this.checkAngularProject();
+      this.subscription[commandId] = this.timedStatusCheck
+        .subscribe(() => this.commandStatusCheckingLoop(commandId));
     });
   }
 }

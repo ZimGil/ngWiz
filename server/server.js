@@ -24,26 +24,36 @@ class ProcessRunner {
   }
 
   run(currentProcess) {
+    let isError = false;
     this.runningProcesses[currentProcess.id] = {
       process: null,
-      isDone: false
+      status: 'working'
     };
     this.runningProcesses[currentProcess.id].process = childProcess.exec(currentProcess.params, currentProcess.callback);
 
     this.runningProcesses[currentProcess.id].process.stdout.on('data', (data) => {
       console.log(data);
     });
+
+    this.runningProcesses[currentProcess.id].process.stderr.on('error', (error) => {
+      console.log("???????????????????????????????????????");
+      isError = true;
+    })
   
     this.runningProcesses[currentProcess.id].process.stdout.on('close', () => {
-      console.log("###################################################################################");
-      if (currentProcess.params.toString().includes(' new ')){
-        const commandValues = currentProcess.params.toString().split(' ');
-        const projectName = commandValues[2];
-        process.chdir(`${process.cwd()}\\${projectName}`);
+      if (isError) {
+        this.runningProcesses[currentProcess.id].status = 'error';
+      } else {
+        this.runningProcesses[currentProcess.id].status = 'done';
+        if (currentProcess.params.toString().includes(' new ')){
+          const commandValues = currentProcess.params.toString().split(' ');
+          const projectName = commandValues[2];
+          process.chdir(`${process.cwd()}\\${projectName}`);
+        }
       }
-
-      this.runningProcesses[currentProcess.id].isDone = true;
+      console.log("###################################################################################");
     })
+
   }
 }
 
@@ -81,9 +91,9 @@ app.get('/status', (req, res) => {
   const id = req.query.id;
 
   if (processRunner.runningProcesses[id]) {
-    const processStatus = processRunner.runningProcesses[id].isDone;
-    res.send(processStatus);
-    if (processStatus) {
+    const processStatus = processRunner.runningProcesses[id].status;
+    res.send({status: processStatus});
+    if (processStatus == 'done') {
       processRunner.runningProcesses[id] = null;
     }
   } else {
