@@ -24,26 +24,41 @@ class ProcessRunner {
   }
 
   run(currentProcess) {
-    let isError = false;
     this.runningProcesses[currentProcess.id] = {
       process: null,
-      status: 'working'
+      status: 'working',
     };
-    this.runningProcesses[currentProcess.id].process = childProcess.exec(currentProcess.params, currentProcess.callback);
+
+    const callback = (err, stdout, stderr) => {
+      if (err) {
+        console.log(err);
+        this.runningProcesses[currentProcess.id].status = 'error';
+        return;
+      }
+    }
+
+
+    this.runningProcesses[currentProcess.id].process = childProcess.exec(currentProcess.params, callback);
+
 
     this.runningProcesses[currentProcess.id].process.stdout.on('data', (data) => {
       console.log(data);
     });
 
-    this.runningProcesses[currentProcess.id].process.stderr.on('error', (error) => {
-      console.log("???????????????????????????????????????");
-      isError = true;
+    this.runningProcesses[currentProcess.id].process.stderr.on('data', (error) => {
+      if (error.includes('error')) {
+        console.log(error);
+        this.runningProcesses[currentProcess.id].status = 'error';
+      } else if (error.includes('warning')) {
+        console.log(error);
+      } else {
+        console.log(error);
+      }
+      
     })
   
     this.runningProcesses[currentProcess.id].process.stdout.on('close', () => {
-      if (isError) {
-        this.runningProcesses[currentProcess.id].status = 'error';
-      } else {
+      if (this.runningProcesses[currentProcess.id].status != 'error') {
         this.runningProcesses[currentProcess.id].status = 'done';
         if (currentProcess.params.toString().includes(' new ')){
           const commandValues = currentProcess.params.toString().split(' ');
@@ -103,16 +118,9 @@ app.get('/status', (req, res) => {
 
 app.post('/command', (req, res) => {
   try {
-    const callback = (err, stdout, stderr) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-    }
 
     const currentProcess = {
       id: ProcessRunner.guid(),
-      callback: callback,
       params: req.body.command
     }
     
