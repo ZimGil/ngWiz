@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
+import { interval } from 'rxjs';
+
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
-import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-root',
