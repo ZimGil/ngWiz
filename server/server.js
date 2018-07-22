@@ -37,9 +37,7 @@ class ProcessRunner {
       }
     }
 
-
     this.runningProcesses[currentProcess.id].process = childProcess.exec(currentProcess.params, callback);
-
 
     this.runningProcesses[currentProcess.id].process.stdout.on('data', (data) => {
       console.log(data);

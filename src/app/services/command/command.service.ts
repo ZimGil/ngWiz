@@ -27,4 +27,5 @@ export class CommandService {
     });
     return this.http.post(`${this.BASE_URL}:${this.PORT}/command`, command, {headers: headers, responseType: 'text'});
   }
+  
 }

@@ -10,6 +10,7 @@ import { CommandRequest } from './models/angular-command-request';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent implements OnInit {
   title = 'Angular CLI to UI';
   isAngularProject: boolean;
@@ -80,4 +81,5 @@ export class AppComponent implements OnInit {
         .subscribe(() => this.startCheckingCommand(commandId));
     });
   }
+
 }
