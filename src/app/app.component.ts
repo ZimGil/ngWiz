@@ -32,23 +32,35 @@ export class AppComponent implements OnInit {
     this.commandService.checkCommandStatus(commandId)
       .subscribe(response => {
         this.runningCommands[commandId] = response;
+      }, error =>{
+        if (error.status == 404) {
+          console.log('command not found in server, stop checking');
+          this.doneCheckingCommand(commandId);
+        }
       });
   }
 
-  commandStatusCheckingLoop(commandId: string): void {
+  doneCheckingCommand(commandId: string): void {
+    this.subscription[commandId].unsubscribe();
+    this.subscription[commandId] = null;
+  }
+
+  commandDone(commandId: string): void {
+    this.checkAngularProject();
+    this.runningCommands[commandId] = null;
+  }
+
+  startCheckingCommand(commandId: string): void {
     if (this.runningCommands[commandId]) {
       const status = this.runningCommands[commandId].status;
 
       if (status == 'done') {
         console.log('done');
-        this.checkAngularProject();
-        this.runningCommands[commandId] = null;
-        this.subscription[commandId].unsubscribe();
-        this.subscription[commandId] = null;
+        this.commandDone(commandId);
+        this.doneCheckingCommand(commandId);
       } else if (status == 'error') {
         console.log('error')
-        this.subscription[commandId].unsubscribe();
-        this.subscription[commandId] = null;
+        this.doneCheckingCommand(commandId);
       } else if (status == 'working') {
         console.log('working');
         this.checkCommandStatus(commandId);
@@ -64,7 +76,7 @@ export class AppComponent implements OnInit {
     .subscribe(commandId => {
       console.log('started working on command, ID:', commandId);
       this.subscription[commandId] = this.timedStatusCheck
-        .subscribe(() => this.commandStatusCheckingLoop(commandId));
+        .subscribe(() => this.startCheckingCommand(commandId));
     });
   }
 }
