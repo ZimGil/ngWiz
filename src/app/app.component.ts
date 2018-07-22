@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   runningCommands = {};
   timedStatusCheck = interval(1000);
   subscription = {};
-  
+
   constructor(private commandService: CommandService) {}
 
   ngOnInit() {
