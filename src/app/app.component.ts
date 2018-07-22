@@ -18,7 +18,6 @@ export class AppComponent implements OnInit {
   timedStatusCheck = interval(1000);
   subscription = {};
   
-
   constructor(private commandService: CommandService) {}
 
   ngOnInit() {
@@ -34,8 +33,8 @@ export class AppComponent implements OnInit {
     this.commandService.checkCommandStatus(commandId)
       .subscribe(response => {
         this.runningCommands[commandId] = response;
-      }, error =>{
-        if (error.status == 404) {
+      }, error => {
+        if (error.status === 404) {
           console.log('command not found in server, stop checking');
           this.doneCheckingCommand(commandId);
         }
@@ -56,14 +55,14 @@ export class AppComponent implements OnInit {
     if (this.runningCommands[commandId]) {
       const status = this.runningCommands[commandId].status;
 
-      if (status == 'done') {
+      if (status === 'done') {
         console.log('done');
         this.commandDone(commandId);
         this.doneCheckingCommand(commandId);
-      } else if (status == 'error') {
-        console.log('error')
+      } else if (status === 'error') {
+        console.log('error');
         this.doneCheckingCommand(commandId);
-      } else if (status == 'working') {
+      } else if (status === 'working') {
         console.log('working');
         this.checkCommandStatus(commandId);
       }

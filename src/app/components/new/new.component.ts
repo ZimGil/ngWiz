@@ -24,7 +24,7 @@ export class NewComponent {
     }
     return false;
   }
-  
+
   createNewProject() {
     this.sendCommand.emit(this.options.createCommandString());
   }
