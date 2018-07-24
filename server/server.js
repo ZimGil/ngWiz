@@ -12,6 +12,13 @@ let isOpenBrowser;
 class ProcessRunner {
   constructor() {
     this.runningProcesses = {};
+    this.callback = (err, stdout, stderr) => {
+      if (err) {
+        console.log(err);
+        runningProcess.status = 'error';
+        return;
+      }
+    }
   }
 
   static guid() {
@@ -23,49 +30,46 @@ class ProcessRunner {
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
   }
 
+  changeProjectFolder(runningProcess) {
+    const commandValues = runningProcess.command.toString().split(' ');
+    const projectName = commandValues[2];
+    process.chdir(`${process.cwd()}\\${projectName}`)
+  }
+
+  handleErrorEvent(error, runningProcess) {
+    if (error.includes('error')) {
+      console.log(error);
+      runningProcess.status = 'error';
+    } else if (error.includes('warning')) {
+      console.log(error);
+    } else {
+      console.log(error);
+    }
+  }
+
+  handleCloseEvent(runningProcess) {
+    if (runningProcess.status != 'error') {
+      runningProcess.status = 'done';
+      if (runningProcess.command.toString().includes(' new ')){
+        this.changeProjectFolder(runningProcess);
+      }
+    }
+    console.log("###################################################################################");
+  }
+
   run(currentProcess) {
     this.runningProcesses[currentProcess.id] = {
       process: null,
       status: 'working',
+      command: currentProcess.params
     };
+    const runningProcess = this.runningProcesses[currentProcess.id];
 
-    const callback = (err, stdout, stderr) => {
-      if (err) {
-        console.log(err);
-        this.runningProcesses[currentProcess.id].status = 'error';
-        return;
-      }
-    }
+    runningProcess.process = childProcess.exec(currentProcess.params, this.callback);
 
-    this.runningProcesses[currentProcess.id].process = childProcess.exec(currentProcess.params, callback);
-
-    this.runningProcesses[currentProcess.id].process.stdout.on('data', (data) => {
-      console.log(data);
-    });
-
-    this.runningProcesses[currentProcess.id].process.stderr.on('data', (error) => {
-      if (error.includes('error')) {
-        console.log(error);
-        this.runningProcesses[currentProcess.id].status = 'error';
-      } else if (error.includes('warning')) {
-        console.log(error);
-      } else {
-        console.log(error);
-      }
-      
-    })
-  
-    this.runningProcesses[currentProcess.id].process.stdout.on('close', () => {
-      if (this.runningProcesses[currentProcess.id].status != 'error') {
-        this.runningProcesses[currentProcess.id].status = 'done';
-        if (currentProcess.params.toString().includes(' new ')){
-          const commandValues = currentProcess.params.toString().split(' ');
-          const projectName = commandValues[2];
-          process.chdir(`${process.cwd()}\\${projectName}`);
-        }
-      }
-      console.log("###################################################################################");
-    })
+    runningProcess.process.stdout.on('data', (data) => console.log(data));
+    runningProcess.process.stderr.on('data', (error) => this.handleErrorEvent(error, runningProcess));
+    runningProcess.process.stdout.on('close', () => this.handleCloseEvent(runningProcess));
 
   }
 }
