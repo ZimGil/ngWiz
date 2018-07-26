@@ -1,4 +1,4 @@
-import { ChildProcess } from 'child_process'
+import { ChildProcess } from 'child_process';
 //
 import { AngularCliProcessStatus } from './angular-cli-process-status.enum';
 
