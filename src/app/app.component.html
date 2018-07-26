@@ -2,7 +2,9 @@
 
 <app-new
     *ngIf="!isAngularProject"
-    (sendCommand)="sendCommand($event)">
+    (sendCommand)="sendCommand($event)"
+    (changeAngularProjectStatus)="checkAngularProject($event)"
+    >
 </app-new>
 
 <ng-container *ngIf="isAngularProject">

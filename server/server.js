@@ -9,12 +9,76 @@ const STATIC_FILES_LOCATION = path.join(__dirname, '..', '/dist/Angular-cli-ui')
 const PORT = 3000;
 
 let isOpenBrowser;
+class ProcessRunner {
+  constructor() {
+    this.runningProcesses = {};
+  }
+
+  static guid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+  }
+
+  changeProjectFolder(runningProcess) {
+    const commandValues = runningProcess.command.toString().split(' ');
+    const projectName = commandValues[2];
+    process.chdir(`${process.cwd()}\\${projectName}`)
+  }
+
+  handleErrorEvent(error, runningProcess) {
+    if (error.includes('error')) {
+      runningProcess.status = 'error';
+    }
+    console.log(error);
+  }
+
+  handleCloseEvent(runningProcess) {
+    if (runningProcess.status != 'error') {
+      runningProcess.status = 'done';
+      if (runningProcess.command.toString().includes(' new ')){
+        this.changeProjectFolder(runningProcess);
+      }
+    }
+    console.log("###################################################################################");
+  }
+
+  run(currentProcess) {
+    this.runningProcesses[currentProcess.id] = {
+      process: null,
+      status: 'working',
+      command: currentProcess.params
+    };
+
+    const runningProcess = this.runningProcesses[currentProcess.id];
+
+    const callback = (err, stdout, stderr) => {
+      if (err) {
+        console.log(err);
+        runningProcess.status = 'error';
+        return;
+      }
+    }
+
+    runningProcess.process = childProcess.exec(currentProcess.params, callback);
+
+    runningProcess.process.stdout.on('data', (data) => console.log(data));
+    runningProcess.process.stderr.on('data', (error) => this.handleErrorEvent(error, runningProcess));
+    runningProcess.process.stdout.on('close', () => this.handleCloseEvent(runningProcess));
+
+  }
+}
 
 process.argv.forEach((val, index, array) => {
   if (val === '-o') {
     isOpenBrowser = true;
   }
 });
+
+const processRunner = new ProcessRunner();
 
 app.use(compression());
 app.use(express.static(STATIC_FILES_LOCATION));
@@ -38,29 +102,30 @@ app.get('/isAngularProject', (req, res) => {
   });
 });
 
+app.get('/status', (req, res) => {
+  const id = req.query.id;
+
+  if (processRunner.runningProcesses[id]) {
+    const processStatus = processRunner.runningProcesses[id].status;
+    res.send({status: processStatus});
+    if (processStatus == 'done') {
+      processRunner.runningProcesses[id] = null;
+    }
+  } else {
+    res.sendStatus(404);
+  }
+});
+
 app.post('/command', (req, res) => {
   try {
-    const commandEvent = childProcess.exec(req.body.command, (err, stdout, stderr) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-    });
 
-    commandEvent.stdout.on('data', (data) => {
-      console.log(data); 
-    });
-  
-    commandEvent.stdout.on('close', () => {
-      console.log("###################################################################################");
-      if (req.body.command.toString().includes(' new ')){
-        const commandValues = req.body.command.toString().split(' ');
-        const projectName = commandValues[2];
-        process.chdir(`${process.cwd()}\\${projectName}`);
-      }
-    })
+    const currentProcess = {
+      id: ProcessRunner.guid(),
+      params: req.body.command
+    }
     
-    res.send('thanks for this data');  
+    processRunner.run(currentProcess);
+    res.send(currentProcess.id);  
   }
   catch(error) {
     console.log(error);
