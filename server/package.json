@@ -2,11 +2,11 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "../dist/out-tsc/server/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "start-browser": "node server.js -o"
+    "start": "node ../dist/out-tsc/server/server.js",
+    "start-browser": "node ../dist/out-tsc/server/server.js -o"
   },
   "author": "Or Tichon",
   "license": "MIT",
