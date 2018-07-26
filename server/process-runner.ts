@@ -1,14 +1,14 @@
 import * as childProcess from 'child_process';
 
-import { AngularCliProcessMap } from "./models/angular-cli-process-map.model";
-import { AngularCliProcessStatus } from "./models/angular-cli-process-status.enum";
+import { AngularCliProcessMap } from './models/angular-cli-process-map.model';
+import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 
 export class ProcessRunner {
 
     runningProcesses: AngularCliProcessMap = {};
-  
+
     constructor() {}
-  
+
     static guid() {
       function s4() {
         return Math.floor((1 + Math.random()) * 0x10000)
@@ -17,22 +17,22 @@ export class ProcessRunner {
       }
       return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     }
-  
+
     changeProjectFolder(runningProcess) {
       const commandValues = runningProcess.command.toString().split(' ');
       const projectName = commandValues[2];
-      process.chdir(`${process.cwd()}\\${projectName}`)
+      process.chdir(`${process.cwd()}\\${projectName}`);
     }
-  
+
     handleErrorEvent(error, runningProcess) {
       if (error.includes('error')) {
         runningProcess.status = AngularCliProcessStatus.error;
       }
       console.log(error);
     }
-  
+
     handleCloseEvent(runningProcess) {
-      if (runningProcess.status != AngularCliProcessStatus.error) {
+      if (runningProcess.status !== AngularCliProcessStatus.error) {
         runningProcess.status = AngularCliProcessStatus.done;
         if (runningProcess.command.toString().includes(' new ')) {
           this.changeProjectFolder(runningProcess);
