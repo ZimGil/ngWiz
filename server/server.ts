@@ -1,11 +1,11 @@
-import * as express from "express";
-import * as path from "path";
-import * as compression from "compression";
-import * as fs from "fs";
+import * as express from 'express';
+import * as path from 'path';
+import * as compression from 'compression';
+import * as fs from 'fs';
 import * as childProcess from 'child_process';
 //
-import { ProcessRunner } from "./process-runner";
-import { AngularCliProcessStatus } from "./models/angular-cli-process-status.enum";
+import { ProcessRunner } from './process-runner';
+import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 
 
 const app = express();
@@ -50,7 +50,7 @@ app.get('/status', (req, res) => {
   if (processRunner.runningProcesses[id]) {
     const processStatus = processRunner.runningProcesses[id].status;
     res.send({status: processStatus});
-    if (processStatus == AngularCliProcessStatus.done) {
+    if (processStatus === AngularCliProcessStatus.done) {
       processRunner.runningProcesses[id] = null;
     }
   } else {
@@ -84,7 +84,7 @@ app.post('/DEVchangeDir', (req, res) => {
 app.listen(PORT, () => {
   console.clear();
   console.log(`Listening on port ${PORT}!`);
-  console.log("GGGGGG");
+  console.log('GGGGGG');
   if (isOpenBrowser) {
     openBrowser(PORT);
   }
