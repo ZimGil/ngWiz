@@ -47,6 +47,7 @@ export class AppComponent implements OnInit {
   }
 
   commandDone(commandId: string): void {
+    console.log('done');
     this.checkAngularProject();
     this.runningCommands[commandId] = null;
   }
@@ -56,9 +57,8 @@ export class AppComponent implements OnInit {
       const status = this.runningCommands[commandId].status;
 
       if (status === 'done') {
-        console.log('done');
-        this.commandDone(commandId);
         this.doneCheckingCommand(commandId);
+        this.commandDone(commandId);
       } else if (status === 'error') {
         console.log('error');
         this.doneCheckingCommand(commandId);
