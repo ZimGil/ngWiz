@@ -60,8 +60,8 @@ export class AppComponent implements OnInit {
         this.doneCheckingCommand(commandId);
         this.commandDone(commandId);
       } else if (status === 'error') {
-        console.log('error');
         this.doneCheckingCommand(commandId);
+        console.log('error');
       } else if (status === 'working') {
         console.log('working');
         this.checkCommandStatus(commandId);

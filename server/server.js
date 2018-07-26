@@ -12,13 +12,6 @@ let isOpenBrowser;
 class ProcessRunner {
   constructor() {
     this.runningProcesses = {};
-    this.callback = (err, stdout, stderr) => {
-      if (err) {
-        console.log(err);
-        runningProcess.status = 'error';
-        return;
-      }
-    }
   }
 
   static guid() {
@@ -38,13 +31,9 @@ class ProcessRunner {
 
   handleErrorEvent(error, runningProcess) {
     if (error.includes('error')) {
-      console.log(error);
       runningProcess.status = 'error';
-    } else if (error.includes('warning')) {
-      console.log(error);
-    } else {
-      console.log(error);
     }
+    console.log(error);
   }
 
   handleCloseEvent(runningProcess) {
@@ -63,9 +52,18 @@ class ProcessRunner {
       status: 'working',
       command: currentProcess.params
     };
+
     const runningProcess = this.runningProcesses[currentProcess.id];
 
-    runningProcess.process = childProcess.exec(currentProcess.params, this.callback);
+    const callback = (err, stdout, stderr) => {
+      if (err) {
+        console.log(err);
+        runningProcess.status = 'error';
+        return;
+      }
+    }
+
+    runningProcess.process = childProcess.exec(currentProcess.params, callback);
 
     runningProcess.process.stdout.on('data', (data) => console.log(data));
     runningProcess.process.stderr.on('data', (error) => this.handleErrorEvent(error, runningProcess));
