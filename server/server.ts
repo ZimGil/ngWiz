@@ -1,8 +1,8 @@
-import * as express from 'express';
-import * as path from 'path';
-import * as compression from 'compression';
-import * as fs from 'fs';
-import * as childProcess from 'child_process';
+import express = require('express');
+import path = require('path');
+import compression = require('compression');
+import fs = require('fs');
+import childProcess = require('child_process');
 //
 import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
