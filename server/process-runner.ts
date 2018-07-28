@@ -1,4 +1,4 @@
-import * as childProcess from 'child_process';
+import childProcess = require('child_process');
 
 import { AngularCliProcessMap } from './models/angular-cli-process-map.model';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';

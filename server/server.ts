@@ -84,7 +84,6 @@ app.post('/DEVchangeDir', (req, res) => {
 app.listen(PORT, () => {
   console.clear();
   console.log(`Listening on port ${PORT}!`);
-  console.log('GGGGGG');
   if (isOpenBrowser) {
     openBrowser(PORT);
   }
