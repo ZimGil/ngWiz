@@ -1,76 +1,18 @@
-const express = require('express');
-const path = require('path');
-const compression = require('compression');
-const childProcess = require('child_process');
-const fs = require('fs');
+import express = require('express');
+import path = require('path');
+import compression = require('compression');
+import fs = require('fs');
+import childProcess = require('child_process');
+//
+import { ProcessRunner } from './process-runner';
+import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
+
 
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '..', '/dist/Angular-cli-ui');
 const PORT = 3000;
 
 let isOpenBrowser;
-class ProcessRunner {
-  constructor() {
-    this.runningProcesses = {};
-  }
-
-  static guid() {
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-  }
-
-  changeProjectFolder(runningProcess) {
-    const commandValues = runningProcess.command.toString().split(' ');
-    const projectName = commandValues[2];
-    process.chdir(`${process.cwd()}\\${projectName}`)
-  }
-
-  handleErrorEvent(error, runningProcess) {
-    if (error.includes('error')) {
-      runningProcess.status = 'error';
-    }
-    console.log(error);
-  }
-
-  handleCloseEvent(runningProcess) {
-    if (runningProcess.status != 'error') {
-      runningProcess.status = 'done';
-      if (runningProcess.command.toString().includes(' new ')){
-        this.changeProjectFolder(runningProcess);
-      }
-    }
-    console.log("###################################################################################");
-  }
-
-  run(currentProcess) {
-    this.runningProcesses[currentProcess.id] = {
-      process: null,
-      status: 'working',
-      command: currentProcess.params
-    };
-
-    const runningProcess = this.runningProcesses[currentProcess.id];
-
-    const callback = (err, stdout, stderr) => {
-      if (err) {
-        console.log(err);
-        runningProcess.status = 'error';
-        return;
-      }
-    }
-
-    runningProcess.process = childProcess.exec(currentProcess.params, callback);
-
-    runningProcess.process.stdout.on('data', (data) => console.log(data));
-    runningProcess.process.stderr.on('data', (error) => this.handleErrorEvent(error, runningProcess));
-    runningProcess.process.stdout.on('close', () => this.handleCloseEvent(runningProcess));
-
-  }
-}
 
 process.argv.forEach((val, index, array) => {
   if (val === '-o') {
@@ -108,7 +50,7 @@ app.get('/status', (req, res) => {
   if (processRunner.runningProcesses[id]) {
     const processStatus = processRunner.runningProcesses[id].status;
     res.send({status: processStatus});
-    if (processStatus == 'done') {
+    if (processStatus === AngularCliProcessStatus.done) {
       processRunner.runningProcesses[id] = null;
     }
   } else {
