@@ -59,6 +59,18 @@ app.get('/projects', (req, res) => {
   res.send(projects);
 });
 
+app.get('/chooseProject', (req, res) => {
+  console.log('choosing')
+  const projectName = req.query.id;
+  try {
+    process.chdir(projectName);
+    res.send(true);
+  } catch (error) {
+    res.send(false);
+  }
+  
+})
+
 app.get('/status', (req, res) => {
   const id = req.query.id;
 

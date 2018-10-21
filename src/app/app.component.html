@@ -4,7 +4,9 @@
     <app-new
         *ngIf="!isAngularProject"
         (sendCommand)="sendCommand($event)"
+        (sendProjectName)="chooseProject($event)"
         (changeAngularProjectStatus)="checkAngularProject($event)"
+        [availableProjects]="availableProjects"
         >
     </app-new>
     

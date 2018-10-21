@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 
 import { AngularCliCommand } from '../../models/angular-cli-command.interface';
 import { NgNewOptions } from '../../default-values/ng-new-options';
@@ -13,6 +13,8 @@ export class NewComponent {
   private readonly PROJECT_NAME_REGEX = /^[a-zA-Z][0-9a-zA-Z]*(?:-[a-zA-Z][0-9a-zA-Z]*)*$/;
 
   @Output() sendCommand = new EventEmitter<string>();
+  @Output() sendProjectName = new EventEmitter<string>();
+  @Input() availableProjects;
   command: AngularCliCommand;
   options = new NgNewOptions();
 
@@ -27,5 +29,9 @@ export class NewComponent {
 
   createNewProject() {
     this.sendCommand.emit(this.options.createCommandString());
+  }
+
+  chooseProject(projectName: string) {
+    this.sendProjectName.emit(projectName);
   }
 }

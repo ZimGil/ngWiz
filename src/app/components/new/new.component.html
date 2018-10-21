@@ -23,3 +23,13 @@
     Name must start with a letter, and must contain only alphanumeric characters or dashes.
     When adding a dash the segment after the dash must also start with a letter.  
 </div>
+
+<ng-container
+    class="availableProjects"
+    *ngIf="availableProjects">
+<button
+    *ngFor="let project of availableProjects"
+    (click)="chooseProject(project)">
+    {{project}}
+</button>
+</ng-container>

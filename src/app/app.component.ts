@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
   runningCommands = {};
   timedStatusCheck = interval(1000);
   subscription = {};
-  avilableProjects = {};
+  availableProjects: string[] = [];
 
   constructor(private commandService: CommandService) {}
 
@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
         this.isAngularProject = !!response
         if (!this.isAngularProject) {
           this.commandService.getProjects()
-            .subscribe(projects => this.avilableProjects = projects);
+            .subscribe((projects: string[]) => this.availableProjects = projects);
         }
         this.isReadyForWork = true;
       });
@@ -79,6 +79,14 @@ export class AppComponent implements OnInit {
     } else {
       this.checkCommandStatus(commandId);
     }
+  }
+
+  chooseProject(projectName: string) {
+    console.log('app component choose project');
+    this.commandService.chooseProject(projectName)
+      .subscribe(() => {
+        this.checkAngularProject();
+      });
   }
 
   sendCommand(userCommand: string): void {
