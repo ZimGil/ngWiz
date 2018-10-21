@@ -14,6 +14,7 @@ import { CommandRequest } from './models/angular-command-request';
 export class AppComponent implements OnInit {
   title = 'Angular CLI to UI';
   isAngularProject: boolean;
+  isReadyForWork = false;
   runningCommands = {};
   timedStatusCheck = interval(1000);
   subscription = {};
@@ -25,8 +26,12 @@ export class AppComponent implements OnInit {
   }
 
   checkAngularProject(): void {
+    this.isReadyForWork = false;
     this.commandService.isAngularProject()
-      .subscribe(response => this.isAngularProject = !!response);
+      .subscribe(response => {
+        this.isAngularProject = !!response;
+        this.isReadyForWork = true;
+      });
   }
 
   checkCommandStatus(commandId: string): void {

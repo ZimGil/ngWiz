@@ -6,6 +6,7 @@ import childProcess = require('child_process');
 //
 import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
+import { AngularProjectChecker } from './angular-project-checker';
 
 
 const app = express();
@@ -37,11 +38,13 @@ app.get('/', (req, res) => {
 });
 
 app.get('/isAngularProject', (req, res) => {
-  const file = 'angular.json';
-  
-  fs.access(file, fs.constants.F_OK, (err) => {
-    res.send(err ? false : true);
-  });
+  const angularProjectChecker = new AngularProjectChecker();
+
+  angularProjectChecker.check()
+  .then(
+    projectFolder => res.send(true),
+    nonProjectFolder => res.send(false)
+  );
 });
 
 app.get('/status', (req, res) => {
