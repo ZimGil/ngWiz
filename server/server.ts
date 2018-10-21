@@ -40,25 +40,6 @@ app.get('/isAngularProject', (req, res) => {
   isAngularProject(res);
 });
 
-app.get('/projects', (req, res) => {
-  let projects: string[] = [];
-  const subDirs = fs.readdirSync(process.cwd());
-
-  subDirs.forEach(dir => {
-    const dirPath = process.cwd()+path.sep+dir;
-    try {
-      if (fs.statSync(dirPath).isDirectory()) {
-        const file = `${dirPath}${path.sep}angular.json`;
-        try {
-          fs.accessSync(file);
-          projects.push(dir);
-        } catch {}
-      }
-    } catch {}
-  })
-  res.send(projects);
-});
-
 app.get('/status', (req, res) => {
   const id = req.query.id;
 
