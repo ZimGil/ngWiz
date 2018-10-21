@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
     this.isReadyForWork = false;
     this.commandService.isAngularProject()
       .subscribe(response => {
-        this.isAngularProject = !!response
+        this.isAngularProject = !!response;
         this.isReadyForWork = true;
       });
   }

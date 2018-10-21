@@ -93,38 +93,33 @@ function openBrowser(port) {
 }
 
 function isAngularProject(res) {
-  console.log('checking if running inside an agular project')
-
-  let testResult: boolean;
-  let isReady = false;
-  
+  console.log('checking if running inside an agular project');
   const callback = (err, stdout, stderr) => {};
 
-  function isMainProjectFolder(res) {
+  function isMainProjectFolder(response) {
     const file = 'angular.json';
 
     fs.access(file, fs.constants.F_OK, (err) => {
       if (err) {
         process.chdir('../');
-        isMainProjectFolder(res);
+        isMainProjectFolder(response);
       } else {
         console.log('running inside main folder of an angular project');
         res.send(true);
       }
-    })
+    });
   }
-  
+
   function catchError(error) {
     if (error.includes('Invalid options, "name" is required')) {
       console.log('not running inside an angular project');
       res.send(false);
-    }
-    else if (error.includes('This command can not be run inside of a CLI project')) {
-      console.log('running inside an angular project, looking for main folder')
+    } else if (error.includes('This command can not be run inside of a CLI project')) {
+      console.log('running inside an angular project, looking for main folder');
       isMainProjectFolder(res);
     }
   }
-  
+
   const testProcess = childProcess.exec('ng new', callback);
   testProcess.stderr.on('data', (error) => catchError(error));
 }
