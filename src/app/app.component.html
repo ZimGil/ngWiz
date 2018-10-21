@@ -1,13 +1,21 @@
 <h1>Angular CLI to UI</h1>
 
-<app-new
-    *ngIf="!isAngularProject"
-    (sendCommand)="sendCommand($event)"
-    (changeAngularProjectStatus)="checkAngularProject($event)"
-    >
-</app-new>
+<ng-container *ngIf="isReadyForWork">
+    <app-new
+        *ngIf="!isAngularProject"
+        (sendCommand)="sendCommand($event)"
+        (changeAngularProjectStatus)="checkAngularProject($event)"
+        >
+    </app-new>
+    
+    <ng-container *ngIf="isAngularProject">
+        <app-serve (sendCommand)="sendCommand($event)"></app-serve>
+        <app-generate (sendCommand)="sendCommand($event)"></app-generate>
+    </ng-container>
+</ng-container>
 
-<ng-container *ngIf="isAngularProject">
-    <app-serve (sendCommand)="sendCommand($event)"></app-serve>
-    <app-generate (sendCommand)="sendCommand($event)"></app-generate>
+<ng-container
+    *ngIf="!isReadyForWork"
+    class="blocker">
+    Please wait while the server is loading
 </ng-container>
