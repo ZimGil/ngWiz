@@ -44,7 +44,7 @@ app.get('/isAngularProject', (req, res) => {
   .then(
     projectFolder => res.send(true),
     nonProjectFolder => res.send(false)
-  )
+  );
 });
 
 app.get('/status', (req, res) => {
