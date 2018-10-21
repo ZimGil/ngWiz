@@ -38,7 +38,6 @@ export class AppComponent implements OnInit {
         this.isReadyForWork = true;
       });
   }
-  
 
   checkCommandStatus(commandId: string): void {
     this.commandService.checkCommandStatus(commandId)
