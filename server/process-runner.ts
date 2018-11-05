@@ -18,6 +18,18 @@ export class ProcessRunner {
       return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     }
 
+    isAngularCommand(commandString: string): boolean {
+      const command = commandString.split(' ');
+
+      if (command[0] === 'ng') {
+        return true;
+      } else if (command[0] === 'npm' && command[1] === 'build') {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     changeProjectFolder(runningProcess) {
       const commandValues = runningProcess.command.toString().split(' ');
       const projectName = commandValues[2];
@@ -58,10 +70,14 @@ export class ProcessRunner {
         }
       };
 
-      runningProcess.process = childProcess.exec(currentProcess.params, callback);
+      if (this.isAngularCommand(runningProcess.command)) {
+        runningProcess.process = childProcess.exec(currentProcess.params, callback);
 
-      runningProcess.process.stdout.on('data', (data) => console.log(data));
-      runningProcess.process.stderr.on('data', (error) => this.handleErrorEvent(error, runningProcess));
-      runningProcess.process.stdout.on('close', () => this.handleCloseEvent(runningProcess));
+        runningProcess.process.stdout.on('data', (data) => console.log(data));
+        runningProcess.process.stderr.on('data', (error) => this.handleErrorEvent(error, runningProcess));
+        runningProcess.process.stdout.on('close', () => this.handleCloseEvent(runningProcess));
+      } else {
+        this.handleErrorEvent('error: not angular command', runningProcess);
+      }
     }
   }
