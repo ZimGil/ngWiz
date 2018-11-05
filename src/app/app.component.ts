@@ -76,6 +76,11 @@ export class AppComponent implements OnInit {
     }
   }
 
+  leaveProject(): void {
+    this.commandService.leaveProject()
+      .subscribe(() => this.checkAngularProject());
+  }
+
   sendCommand(userCommand: string): void {
     const request = new CommandRequest(userCommand);
     this.commandService.sendCommand(request)

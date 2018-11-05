@@ -47,6 +47,16 @@ app.get('/isAngularProject', (req, res) => {
   );
 });
 
+app.get('/leaveProject', (req, res) => {
+  try {
+    process.chdir('../');
+    console.log('leaveing project, new at', process.cwd());
+    res.send();
+  } catch {
+    res.sendStatus(404);
+  }
+});
+
 app.get('/status', (req, res) => {
   const id = req.query.id;
 

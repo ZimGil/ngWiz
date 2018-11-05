@@ -11,6 +11,7 @@
     <ng-container *ngIf="isAngularProject">
         <app-serve (sendCommand)="sendCommand($event)"></app-serve>
         <app-generate (sendCommand)="sendCommand($event)"></app-generate>
+        <button (click)="leaveProject()">Leave Project</button>
     </ng-container>
 </ng-container>
 
