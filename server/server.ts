@@ -67,8 +67,8 @@ app.get('/projects', (req, res) => {
 });
 
 app.get('/chooseProject', (req, res) => {
-  console.log('choosing')
   const projectName = req.query.id;
+  console.log('choosing project', projectName)
   try {
     process.chdir(projectName);
     res.send(true);

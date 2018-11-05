@@ -26,7 +26,7 @@ export class AngularProjectChecker {
           this.isMainProjectFolder();
 
         } else {
-          console.log('running inside main folder of an angular project');
+          console.log('running inside main folder of an angular project', process.cwd());
           this.resolve(true);
         }
       });
