@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
     this.isReadyForWork = false;
     this.commandService.isAngularProject()
       .subscribe(response => {
-        this.isAngularProject = !!response
+        this.isAngularProject = !!response;
         if (!this.isAngularProject) {
           this.commandService.getProjects()
             .subscribe((projects: string[]) => this.availableProjects = projects);

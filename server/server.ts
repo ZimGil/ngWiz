@@ -52,7 +52,7 @@ app.get('/projects', (req, res) => {
   const subDirs = fs.readdirSync(process.cwd());
 
   subDirs.forEach(dir => {
-    const dirPath = process.cwd()+path.sep+dir;
+    const dirPath = process.cwd() + path.sep + dir;
     try {
       if (fs.statSync(dirPath).isDirectory()) {
         const file = `${dirPath}${path.sep}angular.json`;
@@ -62,21 +62,21 @@ app.get('/projects', (req, res) => {
         } catch {}
       }
     } catch {}
-  })
+  });
   res.send(projects);
 });
 
 app.get('/chooseProject', (req, res) => {
   const projectName = req.query.id;
-  console.log('choosing project', projectName)
+  console.log('choosing project', projectName);
   try {
     process.chdir(projectName);
     res.send(true);
   } catch (error) {
     res.send(false);
   }
-  
-})
+
+});
 
 app.get('/status', (req, res) => {
   const id = req.query.id;
