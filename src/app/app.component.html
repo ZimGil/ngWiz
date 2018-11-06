@@ -11,7 +11,13 @@
     <ng-container *ngIf="isAngularProject">
         <app-serve (sendCommand)="sendCommand($event)"></app-serve>
         <app-generate (sendCommand)="sendCommand($event)"></app-generate>
-        <button (click)="leaveProject()">Leave Project</button>
+        <button
+            (click)="leaveProject()"
+            [disabled]="!isProjectLeaveable">
+            Leave Project
+        </button>
+        <div *ngIf="!isProjectLeaveable">Can not leave this project</div>
+
     </ng-container>
 </ng-container>
 
