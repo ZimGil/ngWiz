@@ -75,7 +75,21 @@ app.get('/chooseProject', (req, res) => {
   } catch (error) {
     res.send(false);
   }
+});
 
+app.get('/keepAlive', (req, res) => {
+  res.send(true);
+});
+
+app.get('/leaveProject', (req, res) => {
+  try {
+    const projectName = process.cwd().split(path.sep).pop();
+    process.chdir('../');
+    console.log(`leaving project "${projectName}", current directory ${process.cwd()}`);
+    res.send();
+  } catch {
+    res.sendStatus(404);
+  }
 });
 
 app.get('/status', (req, res) => {

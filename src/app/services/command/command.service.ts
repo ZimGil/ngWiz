@@ -30,6 +30,12 @@ export class CommandService {
     console.log('command service');
     return this.http.get(`${this.BASE_URL}:${this.PORT}/chooseProject?id=${projectName}`);
   }
+  keepAlive() {
+    return this.http.get(`${this.BASE_URL}:${this.PORT}/keepAlive`);
+  }
+  leaveProject() {
+    return this.http.get(`${this.BASE_URL}:${this.PORT}/leaveProject`);
+  }
 
   sendCommand(command: CommandRequest) {
     const headers = new HttpHeaders({
