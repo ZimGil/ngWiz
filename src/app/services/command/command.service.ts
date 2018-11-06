@@ -21,6 +21,10 @@ export class CommandService {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/status?id=${commandId}`);
   }
 
+  leaveProject() {
+    return this.http.get(`${this.BASE_URL}:${this.PORT}/leaveProject`);
+  }
+
   sendCommand(command: CommandRequest) {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
