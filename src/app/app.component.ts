@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
   runningCommands = {};
   timedStatusCheck = interval(1000);
   subscription = {};
-  isProjectLeaveable = true;
+  isProjectLeavable = true;
 
   constructor(private commandService: CommandService) {}
 
@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
     this.commandService.leaveProject()
       .subscribe(() => this.checkAngularProject())
       , () => {
-        this.isProjectLeaveable = false;
+        this.isProjectLeavable = false;
       };
   }
 

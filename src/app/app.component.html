@@ -13,10 +13,10 @@
         <app-generate (sendCommand)="sendCommand($event)"></app-generate>
         <button
             (click)="leaveProject()"
-            [disabled]="!isProjectLeaveable">
+            [disabled]="!isProjectLeavable">
             Leave Project
         </button>
-        <div *ngIf="!isProjectLeaveable">Can not leave this project</div>
+        <div *ngIf="!isProjectLeavable">Can not leave this project</div>
 
     </ng-container>
 </ng-container>
