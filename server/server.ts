@@ -49,7 +49,7 @@ app.get('/isAngularProject', (req, res) => {
 
 app.get('/keepAlive', (req, res) => {
   res.send(true);
-})
+});
 
 app.get('/status', (req, res) => {
   const id = req.query.id;
