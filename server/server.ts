@@ -47,6 +47,10 @@ app.get('/isAngularProject', (req, res) => {
   );
 });
 
+app.get('/keepAlive', (req, res) => {
+  res.send(true);
+});
+
 app.get('/leaveProject', (req, res) => {
   try {
     const projectName = process.cwd().split(path.sep).pop();

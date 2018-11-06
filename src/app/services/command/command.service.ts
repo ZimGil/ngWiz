@@ -21,6 +21,9 @@ export class CommandService {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/status?id=${commandId}`);
   }
 
+  keepAlive() {
+    return this.http.get(`${this.BASE_URL}:${this.PORT}/keepAlive`);
+  }
   leaveProject() {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/leaveProject`);
   }
