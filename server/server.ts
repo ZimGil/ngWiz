@@ -47,6 +47,10 @@ app.get('/isAngularProject', (req, res) => {
   );
 });
 
+app.get('/keepAlive', (req, res) => {
+  res.send();
+})
+
 app.get('/status', (req, res) => {
   const id = req.query.id;
 
