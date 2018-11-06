@@ -4,6 +4,7 @@ import { interval } from 'rxjs';
 
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
+import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,7 @@ export class AppComponent implements OnInit {
   timedStatusCheck = interval(1000);
   subscription = {};
   isAlive = true;
+  isProjectLeavable = true;
 
   constructor(private commandService: CommandService) {}
 
@@ -54,7 +56,6 @@ export class AppComponent implements OnInit {
   }
 
   commandDone(commandId: string): void {
-    console.log('done');
     this.checkAngularProject();
     this.runningCommands[commandId] = null;
   }
@@ -63,14 +64,12 @@ export class AppComponent implements OnInit {
     if (this.runningCommands[commandId]) {
       const status = this.runningCommands[commandId].status;
 
-      if (status === 'done') {
+      if (status === AngularCliProcessStatus.done) {
         this.doneCheckingCommand(commandId);
         this.commandDone(commandId);
-      } else if (status === 'error') {
+      } else if (status === AngularCliProcessStatus.error) {
         this.doneCheckingCommand(commandId);
-        console.log('error');
-      } else if (status === 'working') {
-        console.log('working');
+      } else if (status === AngularCliProcessStatus.working) {
         this.checkCommandStatus(commandId);
       }
     } else {
@@ -89,6 +88,14 @@ export class AppComponent implements OnInit {
             this.subscription['keepAlive'].unsubscribe();
           });
       });
+    }
+    
+  leaveProject(): void {
+    this.commandService.leaveProject()
+      .subscribe(
+        () => this.checkAngularProject(),
+        () => this.isProjectLeavable = false
+      );
   }
 
   sendCommand(userCommand: string): void {

@@ -24,6 +24,9 @@ export class CommandService {
   keepAlive() {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/keepAlive`);
   }
+  leaveProject() {
+    return this.http.get(`${this.BASE_URL}:${this.PORT}/leaveProject`);
+  }
 
   sendCommand(command: CommandRequest) {
     const headers = new HttpHeaders({
