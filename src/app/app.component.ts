@@ -18,10 +18,12 @@ export class AppComponent implements OnInit {
   runningCommands = {};
   timedStatusCheck = interval(1000);
   subscription = {};
+  isAlive = true;
 
   constructor(private commandService: CommandService) {}
 
   ngOnInit() {
+    this.keepAlive();
     this.checkAngularProject();
   }
 
@@ -74,6 +76,19 @@ export class AppComponent implements OnInit {
     } else {
       this.checkCommandStatus(commandId);
     }
+  }
+
+  keepAlive(): void {
+    this.subscription['keepAlive'] = this.timedStatusCheck
+      .subscribe(() => {
+        this.commandService.keepAlive()
+          .subscribe( response => {
+            this.isAlive = true;
+          }, error => {
+            this.isAlive = false;
+            this.subscription['keepAlive'].unsubscribe();
+          });
+      });
   }
 
   sendCommand(userCommand: string): void {

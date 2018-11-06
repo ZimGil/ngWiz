@@ -48,7 +48,7 @@ app.get('/isAngularProject', (req, res) => {
 });
 
 app.get('/keepAlive', (req, res) => {
-  res.send();
+  res.send(true);
 })
 
 app.get('/status', (req, res) => {
