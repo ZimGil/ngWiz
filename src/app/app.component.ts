@@ -80,7 +80,7 @@ export class AppComponent implements OnInit {
   leaveProject(): void {
     this.commandService.leaveProject()
       .subscribe(() => this.checkAngularProject())
-      , errer => {
+      , () => {
         this.isProjectLeaveable = false;
       };
   }

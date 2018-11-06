@@ -50,7 +50,7 @@ app.get('/isAngularProject', (req, res) => {
 app.get('/leaveProject', (req, res) => {
   try {
     process.chdir('../');
-    console.log('leaveing project, new at', process.cwd());
+    console.log('leaving project, now at', process.cwd());
     res.send();
   } catch {
     res.sendStatus(404);
