@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
   runningCommands = {};
   timedStatusCheck = interval(1000);
   subscription = {};
-  isProjectLeaveable = false;
+  isProjectLeaveable = true;
 
   constructor(private commandService: CommandService) {}
 
