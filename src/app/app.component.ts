@@ -79,10 +79,10 @@ export class AppComponent implements OnInit {
 
   leaveProject(): void {
     this.commandService.leaveProject()
-      .subscribe(() => this.checkAngularProject())
-      , () => {
-        this.isProjectLeavable = false;
-      };
+      .subscribe(
+        () => this.checkAngularProject()
+      , () => this.isProjectLeavable = false
+      );
   }
 
   sendCommand(userCommand: string): void {
