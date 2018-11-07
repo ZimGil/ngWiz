@@ -21,6 +21,7 @@ export class AppComponent implements OnInit {
   subscription = {};
   isAlive = true;
   isProjectLeavable = true;
+  isServing = false;
 
   constructor(private commandService: CommandService) {}
 
@@ -60,13 +61,15 @@ export class AppComponent implements OnInit {
     this.runningCommands[commandId] = null;
   }
 
-  startCheckingCommand(commandId: string): void {
+  startCheckingCommand(commandId: string, isServeCommand): void {
     if (this.runningCommands[commandId]) {
       const status = this.runningCommands[commandId].status;
 
       if (status === AngularCliProcessStatus.done) {
         this.doneCheckingCommand(commandId);
         this.commandDone(commandId);
+        this.isServing = true;
+        console.log('done', this.isServing);
       } else if (status === AngularCliProcessStatus.error) {
         this.doneCheckingCommand(commandId);
       } else if (status === AngularCliProcessStatus.working) {
@@ -98,14 +101,21 @@ export class AppComponent implements OnInit {
       );
   }
 
-  sendCommand(userCommand: string): void {
+  sendCommand(userCommand: string, isServeCommand = false): void {
+    console.log('command');
     const request = new CommandRequest(userCommand);
     this.commandService.sendCommand(request)
     .subscribe(commandId => {
       console.log('started working on command, ID:', commandId);
       this.subscription[commandId] = this.timedStatusCheck
-        .subscribe(() => this.startCheckingCommand(commandId));
+        .subscribe(() => this.startCheckingCommand(commandId, isServeCommand));
     });
   }
+
+  sendServeCommand(serveCommand: string): void {
+    console.log('serve');
+    this.sendCommand(serveCommand, true);
+  }
+
 
 }

@@ -24,6 +24,11 @@ export class CommandService {
   keepAlive() {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/keepAlive`);
   }
+
+  stopServing(port: number) {
+    return this.http.get(`${this.BASE_URL}:${this.PORT}/stopServing?id=${port}`);
+  }
+
   leaveProject() {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/leaveProject`);
   }
