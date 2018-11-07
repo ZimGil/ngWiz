@@ -39,28 +39,28 @@ export class ProcessRunner {
 
     handleDataEvent(data, runningProcess: AngularCliProcess) {
       console.log(data);
-      if (runningProcess.command.includes('ng serve ')){
+      if (runningProcess.command.includes('ng serve ')) {
         this.handleServeData(data, runningProcess);
       }
     }
 
     handleErrorEvent(error, runningProcess: AngularCliProcess) {
-      if (runningProcess.command.includes('ng serve ')){
+      if (runningProcess.command.includes('ng serve ')) {
         this.handleServeErrorEvent(error, runningProcess);
-      }else if (error.includes('error')) {
+      } else if (error.includes('error')) {
         runningProcess.status = AngularCliProcessStatus.error;
       }
       console.log(error);
     }
 
     handleServeData(data, runningProcess: AngularCliProcess) {
-      if (data.includes('Compiled successfully')){
+      if (data.includes('Compiled successfully')) {
         runningProcess.status = AngularCliProcessStatus.done;
       }
     }
 
     handleServeErrorEvent(error, runningProcess: AngularCliProcess) {
-      if (error.includes('Error: Command failed: ng serve')){
+      if (error.includes('Error: Command failed: ng serve')) {
         runningProcess.status = AngularCliProcessStatus.error;
       }
     }
