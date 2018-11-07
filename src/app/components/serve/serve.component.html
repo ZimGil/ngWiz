@@ -1,32 +1,38 @@
 <div>Hostname / IP</div>
 
-<label>
-    <input 
-        type="checkbox"
-        [(ngModel)]="options.optionalFlags.host.isActive">
-    <span>Add Hoatname </span>
-    <input 
-    *ngIf="options.optionalFlags.host.isActive"
-    type="text" 
-    [(ngModel)]="options.optionalFlags.host.value">
-</label>
-<label>
-    <input
-        type="checkbox"
-        [(ngModel)]="options.optionalFlags.port.isActive">
-    <span>Add Port </span>
-    <input
-        *ngIf="options.optionalFlags.port.isActive"
-        type="text"
-        [(ngModel)]="options.optionalFlags.port.value">
-</label>
-<label>
+<ng-container *ngIf="!isServing">
+    <label>
+        <input 
+            type="checkbox"
+            [(ngModel)]="options.optionalFlags.host.isActive">
+        <span>Add Hoatname </span>
+        <input 
+        *ngIf="options.optionalFlags.host.isActive"
+        type="text" 
+        [(ngModel)]="options.optionalFlags.host.value">
+    </label>
+    <label>
+        <input
+            type="checkbox"
+            [(ngModel)]="options.optionalFlags.port.isActive">
+        <span>Add Port </span>
+        <input
+            *ngIf="options.optionalFlags.port.isActive"
+            type="text"
+            [(ngModel)]="options.optionalFlags.port.value">
+    </label>
+    <label>
         <input type="checkbox" [(ngModel)]="options.optionalFlags.open.isActive">
-    <span>Open</span>
-</label>
-
+        <span>Open</span>
+    </label>
+    <button
+        (click)="startServing()"
+        [disabled]="!isAllInputsValid()">
+        Start Serving
+    </button>
+</ng-container>
 <button
-    (click)="runServer()"
-    [disabled]="!isAllInputsValid()">
-        Run Server
+    *ngIf="isServing"
+    (click)="stopServing()">
+    Stop Serving
 </button>

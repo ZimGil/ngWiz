@@ -10,7 +10,10 @@
         </app-new>
         
         <ng-container *ngIf="isAngularProject">
-            <app-serve (sendCommand)="sendServeCommand($event)"></app-serve>
+            <app-serve
+                (sendCommand)="sendServeCommand($event)"
+                [isServing]="isServing">
+            </app-serve>
             <app-generate (sendCommand)="sendCommand($event)"></app-generate>
             <button
                 (click)="leaveProject()"

@@ -1,7 +1,8 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 
 import { AngularCliCommand } from '../../models/angular-cli-command.interface';
 import { NgserveOptions } from '../../default-values/ng-serve-options';
+import { CommandService } from './../../services/command/command.service';
 
 @Component({
   selector: 'app-serve',
@@ -14,11 +15,21 @@ export class ServeComponent {
   private readonly MAXIMUM_PORT = 99999;
 
   @Output() sendCommand = new EventEmitter<string>();
+  @Input() isServing: boolean;
   command: AngularCliCommand;
   options = new NgserveOptions();
 
-  runServer(): void {
+  constructor(private commandService: CommandService) {}
+
+  startServing(): void {
     this.sendCommand.emit(this.options.createCommandString());
+  }
+
+  stopServing(): void {
+    this.commandService.stopServing(this.options.optionalFlags.port.value)
+    .subscribe(() => {
+      this.isServing = false;
+    });
   }
 
   isPortValid(): boolean {
