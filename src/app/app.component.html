@@ -12,7 +12,7 @@
         <ng-container *ngIf="isAngularProject">
             <app-serve
                 (sendCommand)="sendServeCommand($event)"
-                [isServing]="isServing">
+                [serveCommandId]="serveCommandId">
             </app-serve>
             <app-generate (sendCommand)="sendCommand($event)"></app-generate>
             <button

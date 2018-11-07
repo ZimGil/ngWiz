@@ -15,7 +15,7 @@ export class ServeComponent {
   private readonly MAXIMUM_PORT = 99999;
 
   @Output() sendCommand = new EventEmitter<string>();
-  @Input() isServing: boolean;
+  @Input() serveCommandId: string;
   command: AngularCliCommand;
   options = new NgserveOptions();
 
@@ -26,9 +26,9 @@ export class ServeComponent {
   }
 
   stopServing(): void {
-    this.commandService.stopServing(this.options.optionalFlags.port.value)
+    this.commandService.stopServing(this.serveCommandId)
     .subscribe(() => {
-      this.isServing = false;
+      this.serveCommandId = null;
     });
   }
 

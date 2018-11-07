@@ -1,6 +1,6 @@
 <div>Hostname / IP</div>
 
-<ng-container *ngIf="!isServing">
+<ng-container *ngIf="!serveCommandId">
     <label>
         <input 
             type="checkbox"
@@ -32,7 +32,7 @@
     </button>
 </ng-container>
 <button
-    *ngIf="isServing"
+    *ngIf="serveCommandId"
     (click)="stopServing()">
     Stop Serving
 </button>

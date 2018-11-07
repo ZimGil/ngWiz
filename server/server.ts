@@ -47,6 +47,23 @@ app.get('/isAngularProject', (req, res) => {
   );
 });
 
+app.get('/stopServing', (req, res) => {
+  const id = req.query.id;
+   if (processRunner.runningProcesses[id]) {
+    const port = processRunner.runningProcesses[id].command.match(/\s([0-9]{4,5})\s?/g)[0].replace(/\s/g, '');
+     const killProcess = {
+      id: 'killer',
+      params: `for /f "tokens=5" %a in ('netstat -ano ^| find "${port}" ^| find "LISTENING"') do taskkill /f /pid %a`
+    };
+    processRunner.run(killProcess);
+    processRunner.runningProcesses['killer'] = null;
+    res.send({id: req.query.id});
+    processRunner.runningProcesses[id] = null;
+  } else {
+    res.sendStatus(404);
+  }
+});
+
 app.get('/keepAlive', (req, res) => {
   res.send(true);
 });
@@ -68,7 +85,8 @@ app.get('/status', (req, res) => {
   if (processRunner.runningProcesses[id]) {
     const processStatus = processRunner.runningProcesses[id].status;
     res.send({status: processStatus});
-    if (processStatus === AngularCliProcessStatus.done) {
+    if (processStatus === AngularCliProcessStatus.done
+      && !processRunner.runningProcesses[id].command.includes('ng serve ')) {
       processRunner.runningProcesses[id] = null;
     }
   } else {

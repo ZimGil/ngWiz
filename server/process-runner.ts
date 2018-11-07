@@ -92,7 +92,8 @@ export class ProcessRunner {
         }
       };
 
-      if (this.isAngularCommand(runningProcess.command)) {
+      if (this.isAngularCommand(runningProcess.command)
+        || currentProcess.id === 'killer') {
         runningProcess.process = childProcess.exec(currentProcess.params, callback);
 
         runningProcess.process.stdout.on('data', (data) => this.handleDataEvent(data, runningProcess));
