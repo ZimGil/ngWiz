@@ -68,7 +68,9 @@ export class AppComponent implements OnInit {
       if (status === AngularCliProcessStatus.done) {
         this.doneCheckingCommand(commandId);
         this.commandDone(commandId);
-        this.serveCommandId = commandId;
+        if (isServeCommand){
+          this.serveCommandId = commandId;
+        }
       } else if (status === AngularCliProcessStatus.error) {
         this.doneCheckingCommand(commandId);
       } else if (status === AngularCliProcessStatus.working) {
