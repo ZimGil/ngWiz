@@ -118,5 +118,4 @@ export class AppComponent implements OnInit {
   addError(error: PopUpError): void {
     this.errorService.addError(error);
   }
-
 }
