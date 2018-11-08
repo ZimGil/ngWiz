@@ -17,7 +17,7 @@ export class ErrorService {
   }
 
   clearError(error: PopUpError): void {
-    this.errors.splice(this.errors.indexOf(error),1);
+    this.errors.splice(this.errors.indexOf(error), 1);
   }
 
   isErrors(): boolean {
