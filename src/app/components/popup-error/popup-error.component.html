@@ -3,7 +3,7 @@
   class="error">
     {{error.errorText}}
     <ng-container
-      *ngIf="error.hadleFunction"
+      *ngIf="error.handleFunction"
       class="userSelection">
         <button (click)="handleError(error)">Yes</button>
         <button (click)="clearError(error)">No</button>
