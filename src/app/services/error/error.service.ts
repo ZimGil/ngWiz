@@ -8,18 +8,8 @@ export class ErrorService {
 
   errors: PopUpError[] = [];
 
-  addError(error: string) {
-    this.errors.push({errorText: error})
-  }
-  
-  addErrorWithOption(
-    error: string,
-    handleFunction: Function,
-    callingObject: Object): void {
-
-      this.errors.push({errorText: error,
-        handleFunction: handleFunction,
-        callingObject: callingObject});
+  addError(error: PopUpError): void {
+    this.errors.push(error);
   }
 
   getErrors(): PopUpError[] {

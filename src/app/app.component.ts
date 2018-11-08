@@ -5,6 +5,8 @@ import { interval } from 'rxjs';
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
+import { ErrorService } from './services/error/error.service';
+import { PopUpError } from './models/pop-up-error.interface';
 
 @Component({
   selector: 'app-root',
@@ -20,9 +22,10 @@ export class AppComponent implements OnInit {
   timedStatusCheck = interval(1000);
   subscription = {};
   isAlive = true;
-  isProjectLeavable = true;
 
-  constructor(private commandService: CommandService) {}
+  constructor(
+    private commandService: CommandService,
+    private errorService: ErrorService) {}
 
   ngOnInit() {
     this.keepAlive();
@@ -94,8 +97,12 @@ export class AppComponent implements OnInit {
     this.commandService.leaveProject()
       .subscribe(
         () => this.checkAngularProject(),
-        () => this.isProjectLeavable = false
-      );
+        () => {
+          this.errorService.addError({
+            errorText: 'Unable to leave this project',
+            errorDescription: 'To run ngWiz on another project or to create a new one, please run it in the apropriate project direcroty'
+          });
+        });
   }
 
   sendCommand(userCommand: string): void {
@@ -106,6 +113,10 @@ export class AppComponent implements OnInit {
       this.subscription[commandId] = this.timedStatusCheck
         .subscribe(() => this.startCheckingCommand(commandId));
     });
+  }
+
+  addError(error: PopUpError): void {
+    this.errorService.addError(error);
   }
 
 }
