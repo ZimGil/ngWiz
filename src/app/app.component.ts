@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
-import { interval } from 'rxjs';
+import { interval, timer } from 'rxjs';
+import { exhaustMap } from 'rxjs/operators';
 
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 import { ErrorService } from './services/error/error.service';
-import { PopUpError } from './models/pop-up-error.interface';
 
 @Component({
   selector: 'app-root',
@@ -20,8 +20,8 @@ export class AppComponent implements OnInit {
   isReadyForWork = false;
   runningCommands = {};
   timedStatusCheck = interval(1000);
+  KEEP_ALIVE_INTERVAL = 1000;
   subscription = {};
-  isAlive = true;
 
   constructor(
     private commandService: CommandService,
@@ -82,17 +82,24 @@ export class AppComponent implements OnInit {
   }
 
   keepAlive(): void {
-    this.subscription['keepAlive'] = this.timedStatusCheck
-      .subscribe(() => {
-        this.commandService.keepAlive()
-          .subscribe( response => {
-            this.isAlive = true;
-          }, error => {
-            this.isAlive = false;
-            this.subscription['keepAlive'].unsubscribe();
+    console.log('keep alive sending');
+    this.subscription['TimedkeepAlive'] = timer(0, this.KEEP_ALIVE_INTERVAL)
+      .pipe(
+        exhaustMap(
+          () => this.commandService.keepAlive()
+        )
+      )
+      .subscribe(
+        response => {},
+        error => {
+          this.errorService.addError({
+            errorText: 'The server is offline',
+            errorDescription: 'please run the server and restart the client'
           });
-      });
-    }
+          this.subscription['TimedkeepAlive'].unsubscribe();
+        }
+      );
+  }
 
   leaveProject(): void {
     this.commandService.leaveProject()
