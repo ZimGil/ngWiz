@@ -25,7 +25,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private commandService: CommandService,
-    private errorService: ErrorService) {}
+    private errorService: ErrorService
+  ) {}
 
   ngOnInit() {
     this.keepAlive();
@@ -113,9 +114,5 @@ export class AppComponent implements OnInit {
       this.subscription[commandId] = this.timedStatusCheck
         .subscribe(() => this.startCheckingCommand(commandId));
     });
-  }
-
-  addError(error: PopUpError): void {
-    this.errorService.addError(error);
   }
 }

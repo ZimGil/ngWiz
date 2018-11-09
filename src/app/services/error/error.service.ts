@@ -6,7 +6,7 @@ import { PopUpError } from './../../models/pop-up-error.interface';
 })
 export class ErrorService {
 
-  errors: PopUpError[] = [];
+  private errors: PopUpError[] = [];
 
   addError(error: PopUpError): void {
     this.errors.push(error);
@@ -21,11 +21,13 @@ export class ErrorService {
   }
 
   isErrors(): boolean {
-    return this.errors === [] ? false : true;
+    return !!this.errors.length;
   }
 
   handleError(error: PopUpError): void {
-    error.handleFunction.call(error.callingObject);
+    if (error.handleFunction && typeof error.handleFunction === 'function') {
+      error.handleFunction.call(error.callingScop);
+    }
     this.clearError(error);
   }
 }
