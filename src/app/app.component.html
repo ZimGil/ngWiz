@@ -1,5 +1,7 @@
 <h1>Angular CLI to UI</h1>
 
+<app-popup-error></app-popup-error>
+
 <ng-container *ngIf="isAlive">
     <ng-container *ngIf="isReadyForWork">
         <app-new
@@ -22,14 +24,4 @@
             <div *ngIf="!isProjectLeavable">Can not leave this project</div>
         </ng-container>
     </ng-container>
-
-    <ng-container
-        *ngIf="!isReadyForWork"
-        class="blocker">
-        Please wait while the server is loading
-    </ng-container>
-</ng-container>
-
-<ng-container *ngIf="!isAlive">
-    The server is offline, please run the server and restart the client
 </ng-container>
