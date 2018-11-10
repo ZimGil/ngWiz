@@ -26,7 +26,7 @@ export class ErrorService {
 
   handleError(error: PopUpError): void {
     if (error.handleFunction && typeof error.handleFunction === 'function') {
-      error.handleFunction.call(error.callingScop);
+      error.handleFunction.call(error.callingScope);
     }
     this.clearError(error);
   }

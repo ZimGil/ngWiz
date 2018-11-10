@@ -82,7 +82,6 @@ export class AppComponent implements OnInit {
   }
 
   keepAlive(): void {
-    console.log('keep alive sending');
     this.subscription['TimedkeepAlive'] = timer(0, this.KEEP_ALIVE_INTERVAL)
       .pipe(
         exhaustMap(
