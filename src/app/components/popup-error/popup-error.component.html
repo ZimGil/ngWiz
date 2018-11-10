@@ -1,0 +1,12 @@
+<div
+  *ngFor="let error of getErrors()"
+  class="error">
+    {{error.errorText}}
+    <ng-container
+      *ngIf="error.handleFunction"
+      class="userSelection">
+        <button (click)="handleError(error)">Yes</button>
+        <button (click)="clearError(error)">No</button>
+    </ng-container>
+    <button *ngIf="!error.handleFunction" (click)="clearError(error)">Ok</button>
+</div>
