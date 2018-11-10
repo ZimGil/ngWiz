@@ -55,7 +55,7 @@ app.get('/projects', (req, res) => {
     const dirPath = process.cwd() + path.sep + dir;
     try {
       if (fs.statSync(dirPath).isDirectory()) {
-        const file = `${dirPath}${path.sep}angular.json`;      
+        const file = `${dirPath}${path.sep}angular.json`;
         fs.accessSync(file);
         projects.push(dir);
       }

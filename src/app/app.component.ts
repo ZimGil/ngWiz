@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
   KEEP_ALIVE_INTERVAL = 1000;
   subscription = {};
   availableProjects: string[] = [];
-  
+
   constructor(
     private commandService: CommandService,
     private errorService: ErrorService
