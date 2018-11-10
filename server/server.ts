@@ -48,7 +48,7 @@ app.get('/isAngularProject', (req, res) => {
 });
 
 app.get('/projects', (req, res) => {
-  let projects: string[] = [];
+  const projects: string[] = [];
   const subDirs = fs.readdirSync(process.cwd());
 
   subDirs.forEach(dir => {
