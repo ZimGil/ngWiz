@@ -1,4 +1,5 @@
 <h1>Angular CLI to UI</h1>
+<h1>{{isAngularProject}}</h1>
 
 <app-popup-error></app-popup-error>
 
@@ -15,11 +16,9 @@
         <app-serve (sendCommand)="sendCommand($event)"></app-serve>
         <app-generate (sendCommand)="sendCommand($event)"></app-generate>
         <button
-            (click)="leaveProject()"
-            [disabled]="!isProjectLeavable">
+            (click)="leaveProject()">
             Leave Project
         </button>
-        <div *ngIf="!isProjectLeavable">Can not leave this project</div>
     </ng-container>
 </ng-container>
 <ng-container	

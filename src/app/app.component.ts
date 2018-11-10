@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
-import { interval, timer } from 'rxjs';
-import { exhaustMap } from 'rxjs/operators';
+import { interval, timer, pipe, Observable, empty } from 'rxjs';
+import { exhaustMap, mergeMap } from 'rxjs/operators';
+
 
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
@@ -23,8 +24,7 @@ export class AppComponent implements OnInit {
   KEEP_ALIVE_INTERVAL = 1000;
   subscription = {};
   availableProjects: string[] = [];
-  isProjectLeavable = true;
-
+  
   constructor(
     private commandService: CommandService,
     private errorService: ErrorService
@@ -38,14 +38,15 @@ export class AppComponent implements OnInit {
   checkAngularProject(): void {
     this.isReadyForWork = false;
     this.commandService.isAngularProject()
-      .subscribe(response => {
-        this.isAngularProject = !!response;
-        if (!this.isAngularProject) {
-          this.commandService.getProjects()
-            .subscribe((projects: string[]) => this.availableProjects = projects);
-        }
-        this.isReadyForWork = true;
-      });
+      .pipe(
+        mergeMap(
+          res => {
+            this.isAngularProject = !!res;
+            this.isReadyForWork = true;
+            return this.isAngularProject ? empty() : this.commandService.getProjects();
+        })
+      )
+      .subscribe((projects: string[]) => this.availableProjects = projects);
   }
 
   checkCommandStatus(commandId: string): void {
@@ -88,11 +89,16 @@ export class AppComponent implements OnInit {
   }
 
   chooseProject(projectName: string) {
-    console.log('app component choose project');
     this.commandService.chooseProject(projectName)
-      .subscribe(() => {
-        this.checkAngularProject();
-      });
+      .subscribe(
+        res => this.isAngularProject = true,
+        () => {
+          this.errorService.addError({
+            errorText: 'Could not choose this project',
+            errorDescription: 'There was an error while trying to choose this project',
+          });
+          this.availableProjects.splice(this.availableProjects.indexOf(projectName));
+        });
     }
 
   keepAlive(): void {
@@ -117,7 +123,7 @@ export class AppComponent implements OnInit {
   leaveProject(): void {
     this.commandService.leaveProject()
       .subscribe(
-        () => this.checkAngularProject(),
+        res => this.isAngularProject = false,
         () => {
           this.errorService.addError({
             errorText: 'Unable to leave this project',

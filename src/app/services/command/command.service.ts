@@ -26,7 +26,6 @@ export class CommandService {
   }
 
   chooseProject(projectName: string) {
-    console.log('command service');
     return this.http.get(`${this.BASE_URL}:${this.PORT}/chooseProject?id=${projectName}`);
   }
   keepAlive() {

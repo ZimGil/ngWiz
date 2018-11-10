@@ -55,13 +55,13 @@ app.get('/projects', (req, res) => {
     const dirPath = process.cwd() + path.sep + dir;
     try {
       if (fs.statSync(dirPath).isDirectory()) {
-        const file = `${dirPath}${path.sep}angular.json`;
-        try {
-          fs.accessSync(file);
-          projects.push(dir);
-        } catch {}
+        const file = `${dirPath}${path.sep}angular.json`;      
+        fs.accessSync(file);
+        projects.push(dir);
       }
-    } catch {}
+    } catch {
+      console.error('Failed attempt to add an angular project to available projects array');
+    }
   });
   res.send(projects);
 });
@@ -71,9 +71,9 @@ app.get('/chooseProject', (req, res) => {
   console.log('choosing project', projectName);
   try {
     process.chdir(projectName);
-    res.send(true);
+    res.send();
   } catch (error) {
-    res.send(false);
+    res.sendStatus(511);
   }
 });
 
