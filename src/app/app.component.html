@@ -13,7 +13,7 @@
     
     <ng-container *ngIf="isAngularProject">
         <app-serve
-            (sendCommand)="sendCommand($event)"
+            (sendCommand)="sendServeCommand($event)"
             [serveCommandId]="serveCommandId">
         </app-serve>
         <app-generate (sendCommand)="sendCommand($event)"></app-generate>

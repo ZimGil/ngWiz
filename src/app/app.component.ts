@@ -137,18 +137,15 @@ export class AppComponent implements OnInit {
 
   sendCommand(userCommand: string, isServeCommand = false): void {
     const request = new CommandRequest(userCommand);
-    let commandId;
+
+    // TO-DO:
+    // remove subscribe inside of subscribe
     this.commandService.sendCommand(request)
-      .pipe(
-        mergeMap(
-          res => {
-            commandId = res;
-            console.log('started working on command, ID:', commandId);
-            this.subscription[commandId] = this.timedStatusCheck;
-            return this.subscription[commandId];
-        })
-      )
-      .subscribe(() => this.startCheckingCommand(commandId, isServeCommand));
+    .subscribe(commandId => {
+      console.log('started working on command, ID:', commandId);
+      this.subscription[commandId] = this.timedStatusCheck
+        .subscribe(() => this.startCheckingCommand(commandId, isServeCommand));
+    });
   }
 
   sendServeCommand(serveCommand: string): void {
