@@ -8,6 +8,7 @@ import { NewComponent } from './components/new/new.component';
 import { ServeComponent } from './components/serve/serve.component';
 import { GenerateComponent } from './components/generate/generate.component';
 import { CommandService } from './services/command/command.service';
+import { PopupErrorComponent } from './components/popup-error/popup-error.component';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { CommandService } from './services/command/command.service';
     AppComponent,
     ServeComponent,
     NewComponent,
-    GenerateComponent
+    GenerateComponent,
+    PopupErrorComponent
   ],
   imports: [
     FormsModule,

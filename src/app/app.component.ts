@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
-import { interval } from 'rxjs';
+import { interval, timer, empty } from 'rxjs';
+import { exhaustMap, mergeMap } from 'rxjs/operators';
 
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
+import { ErrorService } from './services/error/error.service';
 
 @Component({
   selector: 'app-root',
@@ -18,12 +20,15 @@ export class AppComponent implements OnInit {
   isReadyForWork = false;
   runningCommands = {};
   timedStatusCheck = interval(1000);
+  KEEP_ALIVE_INTERVAL = 1000;
   subscription = {};
-  isAlive = true;
-  isProjectLeavable = true;
   serveCommandId: string = null;
+  availableProjects: string[] = [];
 
-  constructor(private commandService: CommandService) {}
+  constructor(
+    private commandService: CommandService,
+    private errorService: ErrorService
+  ) {}
 
   ngOnInit() {
     this.keepAlive();
@@ -33,10 +38,15 @@ export class AppComponent implements OnInit {
   checkAngularProject(): void {
     this.isReadyForWork = false;
     this.commandService.isAngularProject()
-      .subscribe(response => {
-        this.isAngularProject = !!response;
-        this.isReadyForWork = true;
-      });
+      .pipe(
+        mergeMap(
+          res => {
+            this.isAngularProject = !!res;
+            this.isReadyForWork = true;
+            return this.isAngularProject ? empty() : this.commandService.getProjects();
+        })
+      )
+      .subscribe((projects: string[]) => this.availableProjects = projects);
   }
 
   checkCommandStatus(commandId: string): void {
@@ -81,40 +91,67 @@ export class AppComponent implements OnInit {
     }
   }
 
-  keepAlive(): void {
-    this.subscription['keepAlive'] = this.timedStatusCheck
-      .subscribe(() => {
-        this.commandService.keepAlive()
-          .subscribe( response => {
-            this.isAlive = true;
-          }, error => {
-            this.isAlive = false;
-            this.subscription['keepAlive'].unsubscribe();
+  chooseProject(projectName: string) {
+    this.commandService.chooseProject(projectName)
+      .subscribe(
+        res => this.isAngularProject = true,
+        () => {
+          this.errorService.addError({
+            errorText: 'Could not choose this project',
+            errorDescription: 'There was an error while trying to choose this project',
           });
-      });
+          this.availableProjects.splice(this.availableProjects.indexOf(projectName));
+        });
     }
+
+  keepAlive(): void {
+    this.subscription['TimedkeepAlive'] = timer(0, this.KEEP_ALIVE_INTERVAL)
+      .pipe(
+        exhaustMap(
+          () => this.commandService.keepAlive()
+        )
+      )
+      .subscribe(
+        response => {},
+        error => {
+          this.errorService.addError({
+            errorText: 'The server is offline',
+            errorDescription: 'please run the server and restart the client'
+          });
+          this.subscription['TimedkeepAlive'].unsubscribe();
+        }
+      );
+  }
 
   leaveProject(): void {
     this.commandService.leaveProject()
       .subscribe(
-        () => this.checkAngularProject(),
-        () => this.isProjectLeavable = false
-      );
+        res => this.isAngularProject = false,
+        () => {
+          this.errorService.addError({
+            errorText: 'Unable to leave this project',
+            errorDescription: 'To run ngWiz on another project or to create a new one, please run it in the apropriate project direcroty'
+          });
+        });
   }
 
   sendCommand(userCommand: string, isServeCommand = false): void {
     const request = new CommandRequest(userCommand);
+    let commandId;
     this.commandService.sendCommand(request)
-    .subscribe(commandId => {
-      console.log('started working on command, ID:', commandId);
-      this.subscription[commandId] = this.timedStatusCheck
-        .subscribe(() => this.startCheckingCommand(commandId, isServeCommand));
-    });
+      .pipe(
+        mergeMap(
+          res => {
+            commandId = res;
+            console.log('started working on command, ID:', commandId);
+            this.subscription[commandId] = this.timedStatusCheck;
+            return this.subscription[commandId];
+        })
+      )
+      .subscribe(() => this.startCheckingCommand(commandId, isServeCommand));
   }
 
   sendServeCommand(serveCommand: string): void {
     this.sendCommand(serveCommand, true);
   }
-
-
 }

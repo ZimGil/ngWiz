@@ -1,5 +1,6 @@
 import childProcess = require('child_process');
 import fs = require('fs');
+import path = require('path');
 
 export class AngularProjectChecker {
 
@@ -26,7 +27,8 @@ export class AngularProjectChecker {
           this.isMainProjectFolder();
 
         } else {
-          console.log('running inside main folder of an angular project');
+          const projectName = process.cwd().split(path.sep).pop();
+          console.log(`running inside main folder of "${projectName}" project`);
           this.resolve(true);
         }
       });
