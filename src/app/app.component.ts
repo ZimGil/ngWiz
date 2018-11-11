@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { interval, timer } from 'rxjs';
-import { exhaustMap } from 'rxjs/operators';
+import { interval, timer, empty } from 'rxjs';
+import { exhaustMap, mergeMap } from 'rxjs/operators';
 
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
@@ -22,6 +22,7 @@ export class AppComponent implements OnInit {
   timedStatusCheck = interval(1000);
   KEEP_ALIVE_INTERVAL = 1000;
   subscription = {};
+  availableProjects: string[] = [];
 
   constructor(
     private commandService: CommandService,
@@ -36,10 +37,15 @@ export class AppComponent implements OnInit {
   checkAngularProject(): void {
     this.isReadyForWork = false;
     this.commandService.isAngularProject()
-      .subscribe(response => {
-        this.isAngularProject = !!response;
-        this.isReadyForWork = true;
-      });
+      .pipe(
+        mergeMap(
+          res => {
+            this.isAngularProject = !!res;
+            this.isReadyForWork = true;
+            return this.isAngularProject ? empty() : this.commandService.getProjects();
+        })
+      )
+      .subscribe((projects: string[]) => this.availableProjects = projects);
   }
 
   checkCommandStatus(commandId: string): void {
@@ -81,6 +87,19 @@ export class AppComponent implements OnInit {
     }
   }
 
+  chooseProject(projectName: string) {
+    this.commandService.chooseProject(projectName)
+      .subscribe(
+        res => this.isAngularProject = true,
+        () => {
+          this.errorService.addError({
+            errorText: 'Could not choose this project',
+            errorDescription: 'There was an error while trying to choose this project',
+          });
+          this.availableProjects.splice(this.availableProjects.indexOf(projectName));
+        });
+    }
+
   keepAlive(): void {
     this.subscription['TimedkeepAlive'] = timer(0, this.KEEP_ALIVE_INTERVAL)
       .pipe(
@@ -103,7 +122,7 @@ export class AppComponent implements OnInit {
   leaveProject(): void {
     this.commandService.leaveProject()
       .subscribe(
-        () => this.checkAngularProject(),
+        res => this.isAngularProject = false,
         () => {
           this.errorService.addError({
             errorText: 'Unable to leave this project',

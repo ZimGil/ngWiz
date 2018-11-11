@@ -6,7 +6,8 @@
     <app-new
         *ngIf="!isAngularProject"
         (sendCommand)="sendCommand($event)"
-        (changeAngularProjectStatus)="checkAngularProject($event)"
+        (sendProjectName)="chooseProject($event)"
+        [availableProjects]="availableProjects"
         >
     </app-new>
     
@@ -19,9 +20,8 @@
         </button>
     </ng-container>
 </ng-container>
-
-<ng-container
-    *ngIf="!isReadyForWork"
-    class="blocker">
-    Please wait while the server is loading
+<ng-container	
+    *ngIf="!isReadyForWork"	
+    class="blocker">	
+    Please wait while the server is loading	
 </ng-container>

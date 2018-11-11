@@ -17,10 +17,17 @@ export class CommandService {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/isAngularProject`);
   }
 
+  getProjects() {
+    return this.http.get(`${this.BASE_URL}:${this.PORT}/projects`);
+  }
+
   checkCommandStatus(commandId: string) {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/status?id=${commandId}`);
   }
 
+  chooseProject(projectName: string) {
+    return this.http.get(`${this.BASE_URL}:${this.PORT}/chooseProject?name=${projectName}`);
+  }
   keepAlive() {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/keepAlive`);
   }
