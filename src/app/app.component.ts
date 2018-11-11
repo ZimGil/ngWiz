@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { interval, timer, pipe, Observable, empty } from 'rxjs';
+import { interval, timer, empty } from 'rxjs';
 import { exhaustMap, mergeMap } from 'rxjs/operators';
-
 
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';

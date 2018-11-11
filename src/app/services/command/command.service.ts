@@ -26,7 +26,7 @@ export class CommandService {
   }
 
   chooseProject(projectName: string) {
-    return this.http.get(`${this.BASE_URL}:${this.PORT}/chooseProject?id=${projectName}`);
+    return this.http.get(`${this.BASE_URL}:${this.PORT}/chooseProject?name=${projectName}`);
   }
   keepAlive() {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/keepAlive`);

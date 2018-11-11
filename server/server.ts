@@ -49,15 +49,15 @@ app.get('/isAngularProject', (req, res) => {
 
 app.get('/projects', (req, res) => {
   const projects: string[] = [];
-  const subDirs = fs.readdirSync(process.cwd());
+  const folderContent = fs.readdirSync(process.cwd());
 
-  subDirs.forEach(dir => {
-    const dirPath = process.cwd() + path.sep + dir;
+  folderContent.forEach(dirName => {
+    const dirPath = process.cwd() + path.sep + dirName;
     try {
       if (fs.statSync(dirPath).isDirectory()) {
         const file = `${dirPath}${path.sep}angular.json`;
         fs.accessSync(file);
-        projects.push(dir);
+        projects.push(dirName);
       }
     } catch {
       console.error('Failed attempt to add an angular project to available projects array');
@@ -67,7 +67,7 @@ app.get('/projects', (req, res) => {
 });
 
 app.get('/chooseProject', (req, res) => {
-  const projectName = req.query.id;
+  const projectName = req.query.name;
   console.log('choosing project', projectName);
   try {
     process.chdir(projectName);
