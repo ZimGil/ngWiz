@@ -132,7 +132,7 @@ app.post('/DEVchangeDir', (req, res) => {
 app.listen(PORT, () => {
   console.clear();
   startingASCII();
-  //will add version/build number here
+  // TODO: Add version/build number here
   console.log('Listening on ', colors.grey(`http://localhost:${PORT}`));
   if (isOpenBrowser) {
     openBrowser(PORT);
