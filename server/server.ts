@@ -8,9 +8,11 @@ import colors = require('colors/safe');
 import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 import { AngularProjectChecker } from './angular-project-checker';
+import { LogoPrinter } from './logo-printer';
 
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/Angular-cli-ui');
+const logoPrinter = new LogoPrinter();
 const PORT = 3000;
 
 let isOpenBrowser;
@@ -131,27 +133,13 @@ app.post('/DEVchangeDir', (req, res) => {
 
 app.listen(PORT, () => {
   console.clear();
-  startingASCII();
+  logoPrinter.print();
   // TODO: Add version/build number here
   console.log('Listening on ', colors.grey(`http://localhost:${PORT}`));
   if (isOpenBrowser) {
     openBrowser(PORT);
   }
 });
-
-function startingASCII() {
-  console.log();
-  console.log(colors.yellow('                       oooooo   oooooo     oooo  o8o             '));
-  console.log(colors.yellow('                        `888.    `888.     .8\'   `"\'             '));
-  console.log(colors.yellow('ooo. .oo.    .oooooooo   `888.   .8888.   .8\'   oooo    oooooooo '));
-  console.log(colors.yellow('`888P"Y88b  888\' `88b     `888  .8\'`888. .8\'    `888   d\'""7d8P  '));
-  console.log(colors.yellow(' 888   888  888   888      `888.8\'  `888.8\'      888     .d8P\'   '));
-  console.log(colors.yellow(' 888   888  `88bod8P\'       `888\'    `888\'       888   .d8P\'  .P '));
-  console.log(colors.yellow('o888o o888o `8oooooo.        `8\'      `8\'       o888o d8888888P  '));
-  console.log(colors.yellow('            d"     YD                                            '));
-  console.log(colors.yellow('            "Y88888P\'                                            '));
-  console.log();
-}
 
 function openBrowser(port) {
   const url = `http://localhost:${port}`;
