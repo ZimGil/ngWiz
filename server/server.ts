@@ -3,14 +3,15 @@ import path = require('path');
 import compression = require('compression');
 import fs = require('fs');
 import childProcess = require('child_process');
+import colors = require('colors/safe');
 //
 import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 import { AngularProjectChecker } from './angular-project-checker';
-
+import { printLogo } from './logo-printer.helper';
 
 const app = express();
-const STATIC_FILES_LOCATION = path.join(__dirname, '..', '/dist/Angular-cli-ui');
+const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/Angular-cli-ui');
 const PORT = 3000;
 
 let isOpenBrowser;
@@ -149,7 +150,9 @@ app.post('/DEVchangeDir', (req, res) => {
 
 app.listen(PORT, () => {
   console.clear();
-  console.log(`Listening on port ${PORT}!`);
+  printLogo();
+  // TODO: Add version/build number here
+  console.log('Listening on ', colors.grey(`http://localhost:${PORT}`));
   if (isOpenBrowser) {
     openBrowser(PORT);
   }
