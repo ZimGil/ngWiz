@@ -8,11 +8,10 @@ import colors = require('colors/safe');
 import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 import { AngularProjectChecker } from './angular-project-checker';
-import { LogoPrinter } from './logo-printer';
+import { printLogo } from './logo-printer.helper';
 
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/Angular-cli-ui');
-const logoPrinter = new LogoPrinter();
 const PORT = 3000;
 
 let isOpenBrowser;
@@ -133,7 +132,7 @@ app.post('/DEVchangeDir', (req, res) => {
 
 app.listen(PORT, () => {
   console.clear();
-  logoPrinter.print();
+  printLogo();
   // TODO: Add version/build number here
   console.log('Listening on ', colors.grey(`http://localhost:${PORT}`));
   if (isOpenBrowser) {

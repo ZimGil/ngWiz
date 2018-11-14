@@ -1,7 +1,6 @@
 import colors = require('colors/safe');
 
-export class LogoPrinter {
-  print() {
+export function printLogo() {
     console.log();
     console.log(colors.yellow('                       oooooo   oooooo     oooo  o8o             '));
     console.log(colors.yellow('                        `888.    `888.     .8\'   `"\'             '));
@@ -13,5 +12,4 @@ export class LogoPrinter {
     console.log(colors.yellow('            d"     YD                                            '));
     console.log(colors.yellow('            "Y88888P\'                                            '));
     console.log();
-  }
 }
