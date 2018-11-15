@@ -51,17 +51,20 @@ app.get('/isAngularProject', (req, res) => {
 app.get('/projects', (req, res) => {
   const projects: string[] = [];
   const folderContent = fs.readdirSync(process.cwd());
+  console.log(`Looking for Angular Projects under ${cwdGrey()}`)
 
   folderContent.forEach(dirName => {
     const dirPath = process.cwd() + path.sep + dirName;
     try {
       if (fs.statSync(dirPath).isDirectory()) {
+        console.log(`Attempting to acsses ${dirPath}`)
         const file = `${dirPath}${path.sep}angular.json`;
         fs.accessSync(file);
         projects.push(dirName);
       }
-    } catch {
-      console.error('Failed attempt to add an angular project to available projects array');
+    } catch (error) {
+      console.error(`Failed attempt to add ${dirName} to projects array`);
+      console.error(error); 
     }
   });
   res.send(projects);
@@ -69,11 +72,14 @@ app.get('/projects', (req, res) => {
 
 app.get('/chooseProject', (req, res) => {
   const projectName = req.query.name;
-  console.log('choosing project', projectName);
   try {
     process.chdir(projectName);
+    console.log(`Joined project "${projectName}", current directory ${cwdGrey()}`);
     res.send();
-  } catch (error) {
+  }
+  catch (error) {
+    console.error(`Unable to join project "${projectName}"`);
+    console.error(error);
     res.sendStatus(511);
   }
 });
@@ -83,12 +89,15 @@ app.get('/keepAlive', (req, res) => {
 });
 
 app.get('/leaveProject', (req, res) => {
+  const projectName = process.cwd().split(path.sep).pop();
   try {
-    const projectName = process.cwd().split(path.sep).pop();
     process.chdir('../');
-    console.log(`leaving project "${projectName}", current directory ${process.cwd()}`);
+    console.log(`left project "${projectName}", current directory ${cwdGrey()}`);
     res.send();
-  } catch {
+  }
+  catch (error) {
+    console.error(`Unable to leave project "${projectName}"`)
+    console.error(error);
     res.sendStatus(404);
   }
 });
@@ -98,11 +107,14 @@ app.get('/status', (req, res) => {
 
   if (processRunner.runningProcesses[id]) {
     const processStatus = processRunner.runningProcesses[id].status;
+    console.log(`Command status check - process ID: ${id} status: ${processStatus}`);
     res.send({status: processStatus});
     if (processStatus === AngularCliProcessStatus.done) {
       processRunner.runningProcesses[id] = null;
+      console.log(`Process ID: ${id} removed for the server`)
     }
   } else {
+    console.error(`Command status check failed - process ID ${id} not found`);
     res.sendStatus(404);
   }
 });
@@ -115,11 +127,12 @@ app.post('/command', (req, res) => {
       params: req.body.command
     }
     
+    console.log(`Running command: ${currentProcess.params} under ID: ${currentProcess.id}`);
     processRunner.run(currentProcess);
     res.send(currentProcess.id);  
   }
   catch(error) {
-    console.log(error);
+    console.error('Command failed:', error);
     res.status(400).end();
   }
 });
@@ -140,9 +153,13 @@ app.listen(PORT, () => {
   }
 });
 
+function cwdGrey() {
+  return colors.grey(process.cwd());
+}
+
 function openBrowser(port) {
   const url = `http://localhost:${port}`;
   const start = process.platform === 'darwin'? 'open': process.platform === 'win32'? 'start': 'xdg-open';
-
+  console.log('Opening a browser at', colors.cyan(`http://localhost:${PORT}`));
   childProcess.exec(`${start} ${url}`);
 }
