@@ -50,7 +50,7 @@ app.get('/isAngularProject', (req, res) => {
 
 app.get('/stopServing', (req, res) => {
   const id = req.query.id;
-   if (processRunner.runningProcesses[id]) {
+  if (processRunner.runningProcesses[id]) {
     const port = processRunner.runningProcesses[id].command.match(/\s([0-9]{4,5})\s?/g)[0].replace(/\s/g, '');
      const killProcess = {
       id: 'killer',

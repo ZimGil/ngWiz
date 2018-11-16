@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
   timedStatusCheck = interval(1000);
   KEEP_ALIVE_INTERVAL = 1000;
   subscription = {};
-  serveCommandId: string = null;
+  serveCommandId: string;
   availableProjects: string[] = [];
 
   constructor(
@@ -71,7 +71,7 @@ export class AppComponent implements OnInit {
     this.runningCommands[commandId] = null;
   }
 
-  startCheckingCommand(commandId: string, isServeCommand): void {
+  startCheckingCommand(commandId: string, isServeCommand: boolean): void {
     if (this.runningCommands[commandId]) {
       const status = this.runningCommands[commandId].status;
 
@@ -135,7 +135,7 @@ export class AppComponent implements OnInit {
         });
   }
 
-  sendCommand(userCommand: string, isServeCommand = false): void {
+  sendCommand(userCommand: string, isServeCommand: boolean = false): void {
     const request = new CommandRequest(userCommand);
 
     // TO-DO:

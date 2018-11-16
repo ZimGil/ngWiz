@@ -38,7 +38,6 @@ export class ProcessRunner {
     }
 
     handleDataEvent(data, runningProcess: AngularCliProcess) {
-      console.log(data);
       if (runningProcess.command.includes('ng serve ')) {
         this.handleServeData(data, runningProcess);
       }
@@ -56,6 +55,7 @@ export class ProcessRunner {
     handleServeData(data, runningProcess: AngularCliProcess) {
       if (data.includes('Compiled successfully')) {
         runningProcess.status = AngularCliProcessStatus.done;
+        console.log('Serving...');
       }
     }
 
