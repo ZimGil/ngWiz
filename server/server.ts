@@ -4,6 +4,7 @@ import compression = require('compression');
 import fs = require('fs');
 import childProcess = require('child_process');
 import colors = require('colors/safe');
+import { get  Logger } from 'log4js';
 //
 import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
@@ -13,6 +14,8 @@ import { printLogo } from './logo-printer.helper';
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/Angular-cli-ui');
 const PORT = 3000;
+const logger = getLogger();
+logger.level = 'debug';
 
 let isOpenBrowser;
 
