@@ -138,6 +138,7 @@ app.post('/command', (req, res) => {
       params: req.body.command
     }
     
+    logger.debug(`running command ${currentProcess.id}`);
     processRunner.run(currentProcess);
     res.send(currentProcess.id);  
   }
