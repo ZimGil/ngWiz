@@ -1,5 +1,5 @@
-import { configure, getLogger } from "log4js";
-import { getAppDataPath } from "appdata-path";
+import { configure, getLogger } from 'log4js';
+import { getAppDataPath } from 'appdata-path';
 //
 import moment = require('moment');
 import fs = require('fs');
@@ -33,21 +33,21 @@ function deleteOldLogs(): void {
   fs.readdir(LOG_FILES_DIR, (err, files) => {
     files.forEach(file => {
 
-      if (path.extname(file) === '.log'){
-        let filePath = LOG_FILES_DIR + path.sep + file;
-        fs.stat(filePath, (err, stats) => {
-          let lastModify = moment(stats.mtime);
+      if (path.extname(file) === '.log') {
+        const filePath = LOG_FILES_DIR + path.sep + file;
+        fs.stat(filePath, (statsErr, stats) => {
+          const lastModify = moment(stats.mtime);
 
           if (lastModify.isBefore(moment().subtract(1, 'weeks'))) {
-            fs.unlink(filePath, err => {
-              if (err) {
-                throw err;
+            fs.unlink(filePath, unlinkErr => {
+              if (unlinkErr) {
+                throw unlinkErr;
               }
-              logger.info(`deleted old log file ${file}`)
+              logger.info(`Deleted old log file ${file}`);
             });
           }
-        })
+        });
       }
-    })
-  })
+    });
+  });
 }
