@@ -31,13 +31,13 @@ export function loggerConfig(): void {
 function deleteOldLogs(): void {
   fs.readdir(LOG_FILES_DIR, (err, files) => {
     files.forEach(file => {
-      
+
       if (path.extname(file) === '.log'){
         let filePath = LOG_FILES_DIR + path.sep + file;
         fs.stat(filePath, (err, stats) => {
           let lastModify = moment(stats.mtime);
 
-          if (lastModify.isBefore(moment().subtract(1, 'w'))) {
+          if (lastModify.isBefore(moment().subtract(1, 'weeks'))) {
             fs.unlink(filePath, err => {});
           }
         })
