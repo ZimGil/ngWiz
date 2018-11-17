@@ -1,4 +1,4 @@
-import { configure } from "log4js";
+import { configure, getLogger } from "log4js";
 import { getAppDataPath } from "appdata-path";
 //
 import moment = require('moment');
@@ -6,13 +6,12 @@ import fs = require('fs');
 import path = require('path');
 
 const LOG_FILES_DIR = getAppDataPath(`ngWiz${path.sep}logs`);
+const logger = getLogger();
 
 export function loggerConfig(): void {
 
     const dateInFormat = moment().format('DDMMYYTHHmmZZ'); // [171118T1510+0200]
     const logFileName = `${LOG_FILES_DIR}/[${dateInFormat}].debug.log`;
-
-    deleteOldLogs();
 
     configure({
         appenders: {
@@ -26,6 +25,8 @@ export function loggerConfig(): void {
           default: { appenders: [ 'fileFilter', 'stderrFilter', 'stdout' ], level: 'DEBUG' }
         }
       });
+
+      deleteOldLogs();
 }
 
 function deleteOldLogs(): void {
@@ -38,7 +39,12 @@ function deleteOldLogs(): void {
           let lastModify = moment(stats.mtime);
 
           if (lastModify.isBefore(moment().subtract(1, 'weeks'))) {
-            fs.unlink(filePath, err => {});
+            fs.unlink(filePath, err => {
+              if (err) {
+                throw err;
+              }
+              logger.info(`deleted old log file ${file}`)
+            });
           }
         })
       }
