@@ -4,17 +4,19 @@ import compression = require('compression');
 import fs = require('fs');
 import childProcess = require('child_process');
 import colors = require('colors/safe');
-import { getLogger } from 'log4js';
+import { configure, getLogger } from 'log4js';
 //
 import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 import { AngularProjectChecker } from './angular-project-checker';
 import { printLogo } from './logo-printer.helper';
+import { loggerConfig } from './logger.config';
 
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/Angular-cli-ui');
 const PORT = 3000;
 const logger = getLogger();
+loggerConfig();
 logger.level = 'debug';
 
 let isOpenBrowser;
@@ -154,6 +156,12 @@ app.post('/DEVchangeDir', (req, res) => {
 app.listen(PORT, () => {
   console.clear();
   printLogo();
+  logger.trace('Entering cheese testing');
+logger.debug('Got cheese.');
+logger.info('Cheese is Comté.');
+logger.warn('Cheese is quite smelly.');
+logger.error('Cheese is too ripe!');
+logger.fatal('Cheese was breeding ground for listeria.');
   // TODO: Add version/build number here
   logger.debug(`Listening on ${colors.gray(`http://localhost:${PORT}`)}`);
   if (isOpenBrowser) {
