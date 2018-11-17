@@ -138,7 +138,6 @@ app.post('/command', (req, res) => {
       params: req.body.command
     }
     
-    logger.debug(`running command ${currentProcess.id}`);
     processRunner.run(currentProcess);
     res.send(currentProcess.id);  
   }
@@ -157,12 +156,6 @@ app.post('/DEVchangeDir', (req, res) => {
 app.listen(PORT, () => {
   console.clear();
   printLogo();
-  logger.trace('Entering cheese testing');
-logger.debug('Got cheese.');
-logger.info('Cheese is Comté.');
-logger.warn('Cheese is quite smelly.');
-logger.error('Cheese is too ripe!');
-logger.fatal('Cheese was breeding ground for listeria.');
   // TODO: Add version/build number here
   logger.debug(`Listening on ${colors.gray(`http://localhost:${PORT}`)}`);
   if (isOpenBrowser) {
