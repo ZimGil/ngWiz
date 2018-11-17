@@ -4,8 +4,7 @@ import moment = require('moment');
 
 export function loggerConfig(): void {
 
-    const dateInFormat = moment().format('DDMMYYTHHmmZZ');
-    // const utcOffset = moment().zone();
+    const dateInFormat = moment().format('DDMMYYTHHmmZZ'); // [171118T1510+0200]
     const logFileName = `${getAppDataPath('ngWiz')}/logs/[${dateInFormat}].debug.log`;
 
     configure({
