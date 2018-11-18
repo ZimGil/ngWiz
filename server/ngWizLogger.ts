@@ -9,7 +9,7 @@ const LOG_FILES_DIR = getAppDataPath(`ngWiz${path.sep}logs`);
 const dateInFormat = moment().format('DDMMYYTHHmmZZ'); // [171118T1510+0200]
 const logFileName = `${LOG_FILES_DIR}/[${dateInFormat}].debug.log`;
 
-export class ngWizLogger {
+export class NgWizLogger {
 
   constructor (level: string) {
     this.log = getLogger();

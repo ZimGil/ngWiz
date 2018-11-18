@@ -10,12 +10,12 @@ import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 import { AngularProjectChecker } from './angular-project-checker';
 import { printLogo } from './logo-printer.helper';
-import { ngWizLogger } from './ngWizLogger';
+import { NgWizLogger } from './ngWizLogger';
 
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/Angular-cli-ui');
 const PORT = 3000;
-const logger = new ngWizLogger('debug');
+const logger = new NgWizLogger('debug');
 
 let isOpenBrowser;
 
