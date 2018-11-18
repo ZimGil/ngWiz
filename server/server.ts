@@ -4,7 +4,6 @@ import compression = require('compression');
 import fs = require('fs');
 import childProcess = require('child_process');
 import colors = require('colors/safe');
-import { configure } from 'log4js';
 //
 import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
