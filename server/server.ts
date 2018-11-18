@@ -4,20 +4,18 @@ import compression = require('compression');
 import fs = require('fs');
 import childProcess = require('child_process');
 import colors = require('colors/safe');
-import { configure, getLogger } from 'log4js';
+import { configure } from 'log4js';
 //
 import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 import { AngularProjectChecker } from './angular-project-checker';
 import { printLogo } from './logo-printer.helper';
-import { loggerConfig } from './logger.config';
+import { ngWizLogger } from './ngWizLogger';
 
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/Angular-cli-ui');
 const PORT = 3000;
-const logger = getLogger();
-loggerConfig();
-logger.level = 'debug';
+const logger = new ngWizLogger('debug');
 
 let isOpenBrowser;
 
@@ -157,7 +155,7 @@ app.listen(PORT, () => {
   console.clear();
   printLogo();
   // TODO: Add version/build number here
-  logger.debug(`Listening on ${colors.gray(`http://localhost:${PORT}`)}`);
+  logger.log.debug(`Listening on ${colors.gray(`http://localhost:${PORT}`)}`);
   if (isOpenBrowser) {
     openBrowser(PORT);
   }
