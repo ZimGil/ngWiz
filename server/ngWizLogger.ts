@@ -7,7 +7,7 @@ import path = require('path');
 
 const LOG_FILES_DIR = getAppDataPath(`ngWiz${path.sep}logs`);
 const dateInFormat = moment().format('DDMMYYTHHmmZZ'); // [171118T1510+0200]
-const logFileName = `${this.LOG_FILES_DIR}/[${dateInFormat}].debug.log`;
+const logFileName = `${LOG_FILES_DIR}/[${dateInFormat}].debug.log`;
 
 export class ngWizLogger {
 
@@ -25,13 +25,10 @@ function configureLogger(): void {
   configure({
     appenders: {
       stdout: { type: 'stdout' },
-      stderr: { type: 'stderr' },
-      debug: { type: 'file', filename: logFileName },
-      fileFilter: { type: 'logLevelFilter', appender: 'debug', level: 'DEBUG' },
-      stderrFilter: { type: 'logLevelFilter', appender: 'stderr', level: 'ERROR' }
+      logFile: { type: 'file', filename: logFileName },
     },
     categories: {
-      default: { appenders: [ 'fileFilter', 'stderrFilter', 'stdout' ], level: 'DEBUG' }
+      default: { appenders: [ 'logFile', 'stdout' ], level: 'DEBUG' }
     }
   });
 }
@@ -45,7 +42,7 @@ function deleteOldLogs(log: Logger): void {
         fs.stat(filePath, (statsErr, stats) => {
           const lastModify = moment(stats.mtime);
 
-          if (lastModify.isBefore(moment().subtract(1, 'weeks'))) {
+          if (lastModify.isBefore(moment().subtract(3, 'days'))) {
             fs.unlink(filePath, unlinkErr => {
               if (unlinkErr) {
                 throw unlinkErr;
