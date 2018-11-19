@@ -32,7 +32,7 @@ export class AngularProjectChecker {
 
         } else {
           const projectName = process.cwd().split(path.sep).pop();
-          logger.log.debug(`running inside main folder of "${projectName}" project`);
+          logger.log.debug(`Running inside main folder of "${projectName}" project`);
           this.resolve(true);
         }
       });
@@ -40,11 +40,11 @@ export class AngularProjectChecker {
 
     catchError(error) {
       if (error.includes('Invalid options, "name" is required')) {
-        logger.log.debug('not running inside an angular project');
+        logger.log.debug('Not running inside an Angular Project');
         this.reject(false);
 
       } else if (error.includes('This command can not be run inside of a CLI project')) {
-        logger.log.debug('running inside an angular project, looking for main folder');
+        logger.log.debug('Running inside an Angular Project, looking for main folder');
         this.isMainProjectFolder();
       }
     }

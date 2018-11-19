@@ -83,13 +83,13 @@ app.get('/projects', (req, res) => {
         const file = `${dirPath}${path.sep}angular.json`;
         fs.accessSync(file);
         projects.push(dirName);
-        logger.log.debug(`Added ${dirName} to project array`);
+        logger.log.debug(`Added "${dirName}" to projects array`);
       }
     } catch (error) {
-      logger.log.error(`Failed attempt to add ${dirName} to projects array`);
+      logger.log.error(`Failed attempt to add "${dirName}" to projects array`);
     }
   });
-  logger.log.info(`Available projects: ${projects}`);
+  logger.log.info(`Available projects: [${projects.join(', ')}]`);
   res.send(projects);
 });
 
@@ -132,7 +132,8 @@ app.get('/status', (req, res) => {
 
   if (processRunner.runningProcesses[id]) {
     const processStatus = processRunner.runningProcesses[id].status;
-    logger.log.debug(`Command status check - process ID: ${id} status: ${processStatus}`);
+    const printableStatus = AngularCliProcessStatus[processStatus].toLocaleUpperCase();
+    logger.log.debug(`Command status check - process ID: ${id} status: ${printableStatus}`);
     res.send({status: processStatus});
     if (processStatus === AngularCliProcessStatus.done
       && !processRunner.runningProcesses[id].command.includes('ng serve ')) {
@@ -157,8 +158,8 @@ app.post('/command', (req, res) => {
     processRunner.run(currentProcess);
     res.send(currentProcess.id);  
   }
-  catch(error) {
-    logger.log.error(`Command: ${currentProcess.params} failed:`, error);
+  catch (error) {
+    logger.log.error(`Command: "${currentProcess.params}" failed:`, error);
     res.status(400).end();
   }
 });
