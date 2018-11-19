@@ -1,6 +1,10 @@
 import childProcess = require('child_process');
 import fs = require('fs');
 import path = require('path');
+//
+import { NgWizLogger } from './ngWizLogger';
+
+const logger = new NgWizLogger('debug');
 
 export class AngularProjectChecker {
 
@@ -28,7 +32,7 @@ export class AngularProjectChecker {
 
         } else {
           const projectName = process.cwd().split(path.sep).pop();
-          console.log(`running inside main folder of "${projectName}" project`);
+          logger.log.debug(`running inside main folder of "${projectName}" project`);
           this.resolve(true);
         }
       });
@@ -36,11 +40,11 @@ export class AngularProjectChecker {
 
     catchError(error) {
       if (error.includes('Invalid options, "name" is required')) {
-        console.log('not running inside an angular project');
+        logger.log.debug('not running inside an angular project');
         this.reject(false);
 
       } else if (error.includes('This command can not be run inside of a CLI project')) {
-        console.log('running inside an angular project, looking for main folder');
+        logger.log.debug('running inside an angular project, looking for main folder');
         this.isMainProjectFolder();
       }
     }
