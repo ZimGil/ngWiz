@@ -9,10 +9,12 @@ import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 import { AngularProjectChecker } from './angular-project-checker';
 import { printLogo } from './logo-printer.helper';
+import { NgWizLogger } from './ngWizLogger';
 
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/Angular-cli-ui');
 const PORT = 3000;
+const logger = new NgWizLogger('debug');
 
 let isOpenBrowser;
 
@@ -152,7 +154,7 @@ app.listen(PORT, () => {
   console.clear();
   printLogo();
   // TODO: Add version/build number here
-  console.log('Listening on ', colors.grey(`http://localhost:${PORT}`));
+  logger.log.debug(`Listening on ${colors.gray(`http://localhost:${PORT}`)}`);
   if (isOpenBrowser) {
     openBrowser(PORT);
   }
