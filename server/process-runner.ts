@@ -61,7 +61,7 @@ export class ProcessRunner {
     handleServeData(data, runningProcess: AngularCliProcess) {
       if (data.includes('Compiled successfully')) {
         runningProcess.status = AngularCliProcessStatus.done;
-        logger.log.info('Started serving')
+        logger.log.info('Started serving');
       }
     }
 
@@ -76,8 +76,7 @@ export class ProcessRunner {
     handleServeErrorEvent(error, runningProcess: AngularCliProcess) {
       if (
         error.includes('Error: Command failed: ng serve') ||
-        error.includes(`Use '--port' to specify a different port`))
-        {
+        error.includes(`Use '--port' to specify a different port`)) {
           runningProcess.status = AngularCliProcessStatus.error;
           logger.log.error(`Command: "${runningProcess.command}" failed:`, error);
       }

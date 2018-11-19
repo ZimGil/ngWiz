@@ -30,8 +30,8 @@ app.use(express.static(STATIC_FILES_LOCATION));
 app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded()); // to support URL-encoded bodies
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 
@@ -73,7 +73,7 @@ app.get('/stopServing', (req, res) => {
 app.get('/projects', (req, res) => {
   const projects: string[] = [];
   const folderContent = fs.readdirSync(process.cwd());
-  logger.log.debug(`Looking for Angular Projects under ${process.cwd()}`)
+  logger.log.debug(`Looking for Angular Projects under ${process.cwd()}`);
 
   folderContent.forEach(dirName => {
     const dirPath = process.cwd() + path.sep + dirName;
@@ -100,8 +100,7 @@ app.get('/chooseProject', (req, res) => {
     process.chdir(projectName);
     logger.log.debug(`Joined project "${projectName}", current directory ${process.cwd()}`);
     res.send();
-  }
-  catch (error) {
+  } catch (error) {
     logger.log.error(`Unable to join project "${projectName}"`);
     logger.log.error(error);
     res.sendStatus(511);
@@ -119,9 +118,8 @@ app.get('/leaveProject', (req, res) => {
     process.chdir('../');
     logger.log.debug(`left project "${projectName}", current directory ${process.cwd()}`);
     res.send();
-  }
-  catch (error) {
-    logger.log.error(`Unable to leave project "${projectName}"`)
+  } catch (error) {
+    logger.log.error(`Unable to leave project "${projectName}"`);
     logger.log.error(error);
     res.sendStatus(404);
   }
@@ -138,7 +136,7 @@ app.get('/status', (req, res) => {
     if (processStatus === AngularCliProcessStatus.done
       && !processRunner.runningProcesses[id].command.includes('ng serve ')) {
       processRunner.runningProcesses[id] = null;
-      logger.log.info(`Process ID: ${id} removed for the server`)
+      logger.log.info(`Process ID: ${id} removed for the server`);
     }
   } else {
     logger.log.error(`Command status check failed - process ID ${id} not found`);
@@ -151,28 +149,27 @@ app.post('/command', (req, res) => {
   const currentProcess = {
     id: ProcessRunner.guid(),
     params: req.body.command
-  }
+  };
 
   try {
     logger.log.debug(`Running command: "${currentProcess.params}" under ID: [${currentProcess.id}]`);
     processRunner.run(currentProcess);
-    res.send(currentProcess.id);  
-  }
-  catch (error) {
+    res.send(currentProcess.id);
+  } catch (error) {
     logger.log.error(`Command: "${currentProcess.params}" failed:`, error);
     res.status(400).end();
   }
 });
 
-//this function will help us in development using Postman to change the working directory
+// this function will help us in development using Postman to change the working directory
 app.post('/DEVchangeDir', (req, res) => {
   process.chdir(req.body.folder);
   res.send(`Working directory chaged to: ${process.cwd()}`);
-})
+});
 
 app.listen(PORT, () => {
   console.clear();
-  logger.log.clearContext()
+  logger.log.clearContext();
   printLogo();
   // TODO: Add version/build number here
   logger.log.debug(`Listening on http://localhost:${PORT}`);
@@ -183,7 +180,7 @@ app.listen(PORT, () => {
 
 function openBrowser(port) {
   const url = `http://localhost:${port}`;
-  const start = process.platform === 'darwin'? 'open': process.platform === 'win32'? 'start': 'xdg-open';
+  const start = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
   logger.log.info(`Opening a browser at: http://localhost:${PORT}`);
   childProcess.exec(`${start} ${url}`);
 }
