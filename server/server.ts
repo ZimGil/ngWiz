@@ -86,7 +86,7 @@ app.get('/projects', (req, res) => {
         logger.log.debug(`Added "${dirName}" to projects array`);
       }
     } catch (error) {
-      logger.log.error(`Failed attempt to add "${dirName}" to projects array`);
+      logger.log.warn(`Failed attempt to add "${dirName}" to projects array`);
     }
   });
   logger.log.info(`Available projects: [${projects.join(', ')}]`);
