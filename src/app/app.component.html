@@ -5,7 +5,7 @@
 <ng-container *ngIf="isReadyForWork">
     <app-new
         *ngIf="!isAngularProject"
-        (sendCommand)="sendCommand($event)"
+        (sendCommand)="sendNewCommand($event)"
         (sendProjectName)="chooseProject($event)"
         [availableProjects]="availableProjects"
         >
