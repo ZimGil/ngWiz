@@ -3,6 +3,9 @@ import childProcess = require('child_process');
 import { AngularCliProcessMap } from './models/angular-cli-process-map.model';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 import { AngularCliProcess } from './models/angular-cli-process.model';
+import { NgWizLogger } from './ngWizLogger';
+
+const logger = new NgWizLogger('debug');
 
 export class ProcessRunner {
 
@@ -41,38 +44,54 @@ export class ProcessRunner {
       if (runningProcess.command.includes('ng serve ')) {
         this.handleServeData(data, runningProcess);
       }
+      if (runningProcess.command.includes('ng new ')) {
+        this.handleNewData(data, runningProcess);
+      }
     }
 
     handleErrorEvent(error, runningProcess: AngularCliProcess) {
-      if (runningProcess.command.includes('ng serve ')) {
+      if (runningProcess.command.includes('ng serve')) {
         this.handleServeErrorEvent(error, runningProcess);
       } else if (error.includes('error')) {
         runningProcess.status = AngularCliProcessStatus.error;
+        logger.log.error(`Command: "${runningProcess.command}" failed:`, error);
       }
-      console.log(error);
     }
 
     handleServeData(data, runningProcess: AngularCliProcess) {
       if (data.includes('Compiled successfully')) {
         runningProcess.status = AngularCliProcessStatus.done;
-        console.log('Serving...');
+        logger.log.info('Started serving')
+      }
+    }
+
+    handleNewData(data, runningProcess: AngularCliProcess) {
+      if (data.includes('angular.json already exists')) {
+        runningProcess.status = AngularCliProcessStatus.error;
+        logger.log.error(`Command: "${runningProcess.command}" failed: Project with that name already exsist`);
+
       }
     }
 
     handleServeErrorEvent(error, runningProcess: AngularCliProcess) {
-      if (error.includes('Error: Command failed: ng serve')) {
-        runningProcess.status = AngularCliProcessStatus.error;
+      if (
+        error.includes('Error: Command failed: ng serve') ||
+        error.includes(`Use '--port' to specify a different port`))
+        {
+          runningProcess.status = AngularCliProcessStatus.error;
+          logger.log.error(`Command: "${runningProcess.command}" failed:`, error);
       }
     }
 
     handleCloseEvent(runningProcess) {
       if (runningProcess.status !== AngularCliProcessStatus.error) {
         runningProcess.status = AngularCliProcessStatus.done;
-        if (runningProcess.command.toString().includes(' new ')) {
-          this.changeProjectFolder(runningProcess);
+        if (
+          runningProcess.command.toString().includes(' new ') &&
+          runningProcess.status === AngularCliProcessStatus.done) {
+            this.changeProjectFolder(runningProcess);
         }
       }
-      console.log('###################################################################################');
     }
 
     run(currentProcess) {
@@ -86,7 +105,6 @@ export class ProcessRunner {
 
       const callback = (err, stdout, stderr) => {
         if (err) {
-          console.log(err);
           runningProcess.status = AngularCliProcessStatus.error;
           return;
         }
@@ -100,7 +118,8 @@ export class ProcessRunner {
         runningProcess.process.stderr.on('data', (error) => this.handleErrorEvent(error, runningProcess));
         runningProcess.process.stdout.on('close', () => this.handleCloseEvent(runningProcess));
       } else {
-        this.handleErrorEvent('error: not angular command', runningProcess);
+        runningProcess.status = AngularCliProcessStatus.error;
+        throw new Error('Not not angular command');
       }
     }
   }
