@@ -84,7 +84,7 @@ export class AppComponent implements OnInit {
         this.commandDone(commandId, commandType);
         if (commandType === AngularCommandType.serve) {
           this.serveCommandId = commandId;
-          localStorage.setItem('ngServe', this.serveCommandId);
+          localStorage.setItem('ngServeCommandId', this.serveCommandId);
         }
       } else if (status === AngularCliProcessStatus.error) {
         this.doneCheckingCommand(commandId);
@@ -141,7 +141,7 @@ export class AppComponent implements OnInit {
   }
 
   loadCurrentServe(): void {
-    this.serveCommandId = localStorage.getItem('ngServe');
+    this.serveCommandId = localStorage.getItem('ngServeCommandId');
   }
 
   sendCommand(userCommand: string, commandType?: AngularCommandType): void {

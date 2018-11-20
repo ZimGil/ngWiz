@@ -39,7 +39,7 @@ export class ServeComponent {
       });
     });
     this.serveCommandId = null;
-    localStorage.removeItem('ngServe');
+    localStorage.removeItem('ngServeCommandId');
   }
 
   isPortValid(): boolean {
