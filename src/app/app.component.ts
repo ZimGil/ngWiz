@@ -150,7 +150,7 @@ export class AppComponent implements OnInit {
         this.serveCommandId = null;
         this.checkAngularProject();
         localStorage.removeItem('ngServeCommandId');
-      })
+      });
   }
 
   sendCommand(userCommand: string, commandType?: AngularCommandType): void {
