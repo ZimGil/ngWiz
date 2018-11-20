@@ -16,7 +16,7 @@ import { AngularCommandType } from './models/angular-command-type.enum';
 })
 
 export class AppComponent implements OnInit {
-  title = 'Angular CLI to UI';
+  title = 'ngWiz';
   isAngularProject: boolean;
   isReadyForWork = false;
   runningCommands = {};
