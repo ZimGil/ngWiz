@@ -74,7 +74,7 @@ export class AppComponent implements OnInit {
     this.runningCommands[commandId] = null;
   }
 
-  startCheckingCommand(commandId: string, commandType: AngularCommandType): void {
+  startCheckingCommand(commandId: string, commandType?: AngularCommandType): void {
     if (this.runningCommands[commandId]) {
       const status = this.runningCommands[commandId].status;
 
@@ -138,7 +138,7 @@ export class AppComponent implements OnInit {
         });
   }
 
-  sendCommand(userCommand: string, commandType: AngularCommandType): void {
+  sendCommand(userCommand: string, commandType?: AngularCommandType): void {
     const request = new CommandRequest(userCommand);
 
     // TO-DO:
