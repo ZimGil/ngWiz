@@ -33,8 +33,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.keepAlive();
-    this.checkAngularProject();
-    this.loadCurrentServe();
+    this.checkIfRunningServeCommand();
   }
 
   checkAngularProject(): void {
@@ -140,8 +139,18 @@ export class AppComponent implements OnInit {
         });
   }
 
-  loadCurrentServe(): void {
-    this.serveCommandId = localStorage.getItem('ngServeCommandId');
+  checkIfRunningServeCommand(): void {
+    const savedCommandId = localStorage.getItem('ngServeCommandId');
+    this.commandService.checkCommandStatus(savedCommandId)
+      .subscribe(status => {
+        this.serveCommandId = savedCommandId;
+        this.isAngularProject = false;
+        this.isReadyForWork = true;
+      }, error => {
+        this.serveCommandId = null;
+        this.checkAngularProject();
+        localStorage.removeItem('ngServeCommandId');
+      })
   }
 
   sendCommand(userCommand: string, commandType?: AngularCommandType): void {
