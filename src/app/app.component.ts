@@ -34,6 +34,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.keepAlive();
     this.checkAngularProject();
+    this.loadCurrentServe();
   }
 
   checkAngularProject(): void {
@@ -83,6 +84,7 @@ export class AppComponent implements OnInit {
         this.commandDone(commandId, commandType);
         if (commandType === AngularCommandType.serve) {
           this.serveCommandId = commandId;
+          localStorage.setItem('ngServe', this.serveCommandId);
         }
       } else if (status === AngularCliProcessStatus.error) {
         this.doneCheckingCommand(commandId);
@@ -136,6 +138,10 @@ export class AppComponent implements OnInit {
             errorDescription: 'To run ngWiz on another project or to create a new one, please run it in the apropriate project direcroty'
           });
         });
+  }
+
+  loadCurrentServe(): void {
+    this.serveCommandId = localStorage.getItem('ngServe');
   }
 
   sendCommand(userCommand: string, commandType?: AngularCommandType): void {
