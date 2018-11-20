@@ -7,6 +7,7 @@ import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 import { ErrorService } from './services/error/error.service';
+import { AngularCommandType } from './models/angular-command-type.enum';
 
 @Component({
   selector: 'app-root',
@@ -66,19 +67,21 @@ export class AppComponent implements OnInit {
     this.subscription[commandId] = null;
   }
 
-  commandDone(commandId: string): void {
-    this.checkAngularProject();
+  commandDone(commandId: string, commandType?: AngularCommandType): void {
+    if (commandType === AngularCommandType.new) {
+      this.checkAngularProject();
+    }
     this.runningCommands[commandId] = null;
   }
 
-  startCheckingCommand(commandId: string, isServeCommand: boolean): void {
+  startCheckingCommand(commandId: string, commandType?: AngularCommandType): void {
     if (this.runningCommands[commandId]) {
       const status = this.runningCommands[commandId].status;
 
       if (status === AngularCliProcessStatus.done) {
         this.doneCheckingCommand(commandId);
-        this.commandDone(commandId);
-        if (isServeCommand) {
+        this.commandDone(commandId, commandType);
+        if (commandType === AngularCommandType.serve) {
           this.serveCommandId = commandId;
         }
       } else if (status === AngularCliProcessStatus.error) {
@@ -135,7 +138,7 @@ export class AppComponent implements OnInit {
         });
   }
 
-  sendCommand(userCommand: string, isServeCommand: boolean = false): void {
+  sendCommand(userCommand: string, commandType?: AngularCommandType): void {
     const request = new CommandRequest(userCommand);
 
     // TO-DO:
@@ -144,11 +147,15 @@ export class AppComponent implements OnInit {
     .subscribe(commandId => {
       console.log('started working on command, ID:', commandId);
       this.subscription[commandId] = this.timedStatusCheck
-        .subscribe(() => this.startCheckingCommand(commandId, isServeCommand));
+        .subscribe(() => this.startCheckingCommand(commandId, commandType));
     });
   }
 
   sendServeCommand(serveCommand: string): void {
-    this.sendCommand(serveCommand, true);
+    this.sendCommand(serveCommand, AngularCommandType.serve);
+  }
+
+  sendNewCommand(newCommand: string): void {
+    this.sendCommand(newCommand, AngularCommandType.new);
   }
 }
