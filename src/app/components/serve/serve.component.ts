@@ -19,6 +19,7 @@ export class ServeComponent {
   @Input() serveCommandId: string;
   command: AngularCliCommand;
   options = new NgserveOptions();
+  isStoppingServeCommand = false;
 
   constructor(
     private commandService: CommandService,
@@ -30,6 +31,7 @@ export class ServeComponent {
   }
 
   stopServing(): void {
+    this.isStoppingServeCommand = true;
     this.commandService.stopServing(this.serveCommandId)
     .subscribe(
       () => {},
@@ -42,6 +44,7 @@ export class ServeComponent {
       () => {
         this.serveCommandId = null;
         localStorage.removeItem('ngServeCommandId');
+        this.isStoppingServeCommand = false;
       }
     );
   }
