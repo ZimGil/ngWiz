@@ -11,7 +11,7 @@ import { printLogo } from './logo-printer.helper';
 import { NgWizLogger } from './ngWizLogger';
 
 const app = express();
-const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/Angular-cli-ui');
+const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/ngWiz');
 const PORT = 3000;
 const logger = new NgWizLogger('debug');
 
