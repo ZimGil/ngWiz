@@ -83,7 +83,6 @@ export class AppComponent implements OnInit {
         this.commandDone(commandId, commandType);
         if (commandType === AngularCommandType.serve) {
           this.serveCommandId = commandId;
-          localStorage.setItem('ngServeCommandId', this.serveCommandId);
         }
       } else if (status === AngularCliProcessStatus.error) {
         this.doneCheckingCommand(commandId);
@@ -165,6 +164,9 @@ export class AppComponent implements OnInit {
     // remove subscribe inside of subscribe
     this.commandService.sendCommand(request)
     .subscribe(commandId => {
+      if (commandType === AngularCommandType.serve) {
+        localStorage.setItem('ngServeCommandId', commandId);
+      }
       console.log('started working on command, ID:', commandId);
       this.subscription[commandId] = this.timedStatusCheck
         .subscribe(() => this.startCheckingCommand(commandId, commandType));

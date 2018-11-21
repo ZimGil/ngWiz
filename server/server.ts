@@ -10,6 +10,7 @@ import { AngularCliProcessStatus } from './models/angular-cli-process-status.enu
 import { AngularProjectChecker } from './angular-project-checker';
 import { printLogo } from './logo-printer.helper';
 import { NgWizLogger } from './ngWizLogger';
+import { timer } from 'rxjs';
 
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/ngWiz');
@@ -58,10 +59,15 @@ app.get('/stopServing', (req, res) => {
       id: 'killer',
       params: `for /f "tokens=5" %a in ('netstat -ano ^| find "${port}" ^| find "LISTENING"') do taskkill /f /pid %a`
     };
-    processRunner.run(killProcess);
-    processRunner.runningProcesses['killer'] = null;
-    res.send({id: req.query.id});
-    processRunner.runningProcesses[id] = null;
+    const ngServeStopper = timer(0, 500).subscribe(() => {
+      if (processRunner.runningProcesses[id].status === AngularCliProcessStatus.done) {
+        processRunner.run(killProcess);
+        processRunner.runningProcesses['killer'] = null;
+        res.send({id: req.query.id});
+        processRunner.runningProcesses[id] = null;
+        ngServeStopper.unsubscribe();
+      }
+    });
   } else {
     res.sendStatus(404);
   }
