@@ -139,10 +139,26 @@ export class AppComponent implements OnInit {
           this.isAngularProject = false;
           return this.commandService.getProjects();
       })
-    )
-    .subscribe((projects: string[]) => {
+    ).pipe(mergeMap((projects: string[]) => {
       this.availableProjects = projects;
-    });
+      return this.commandService.stopServing(this.serveCommandId);
+    })).subscribe(
+      _.noop,
+      error => {
+        this.errorService.addError({
+          errorText: 'The "ng serve" command you\'re trying to stop was not found',
+          errorDescription: 'The server is offline or have been restarted since you\'ve run this command'
+        });
+      },
+      () => {
+        this.serveCommandId = null;
+        localStorage.removeItem('ngServeCommandId');
+      }
+    );
+
+    // .subscribe((projects: string[]) => {
+    //   this.availableProjects = projects;
+    // });
   }
 
   checkIfRunningServeCommand(): void {
