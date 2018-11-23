@@ -33,6 +33,7 @@
 </ng-container>
 <button
     *ngIf="serveCommandId"
-    (click)="stopServing()">
+    (click)="stopServing()"
+    [disabled]="isStoppingServeCommand">
     Stop Serving
 </button>

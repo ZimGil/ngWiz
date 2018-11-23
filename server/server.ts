@@ -4,6 +4,7 @@ import compression = require('compression');
 import fs = require('fs');
 import childProcess = require('child_process');
 import colors = require('colors/safe');
+import { timer } from 'rxjs';
 //
 import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
@@ -58,10 +59,15 @@ app.get('/stopServing', (req, res) => {
       id: 'killer',
       params: `for /f "tokens=5" %a in ('netstat -ano ^| find "${port}" ^| find "LISTENING"') do taskkill /f /pid %a`
     };
-    processRunner.run(killProcess);
-    processRunner.runningProcesses['killer'] = null;
-    res.send({id: req.query.id});
-    processRunner.runningProcesses[id] = null;
+    const ngServeStopper = timer(0, 500).subscribe(() => {
+      if (processRunner.runningProcesses[id].status === AngularCliProcessStatus.done) {
+        processRunner.run(killProcess);
+        processRunner.runningProcesses['killer'] = null;
+        res.send({id: req.query.id});
+        processRunner.runningProcesses[id] = null;
+        ngServeStopper.unsubscribe();
+      }
+    });
   } else {
     res.sendStatus(404);
   }

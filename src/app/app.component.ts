@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.keepAlive();
-    this.checkAngularProject();
+    this.checkIfRunningServeCommand();
   }
 
   checkAngularProject(): void {
@@ -138,6 +138,24 @@ export class AppComponent implements OnInit {
         });
   }
 
+  checkIfRunningServeCommand(): void {
+    const savedCommandId = localStorage.getItem('ngServeCommandId');
+    if (savedCommandId) {
+      this.commandService.checkCommandStatus(savedCommandId).subscribe(status => {
+        this.serveCommandId = savedCommandId;
+        this.isAngularProject = true;
+        this.isReadyForWork = true;
+      }, error => {
+        this.serveCommandId = null;
+        this.checkAngularProject();
+        localStorage.removeItem('ngServeCommandId');
+      });
+    } else {
+      this.serveCommandId = null;
+      this.checkAngularProject();
+    }
+  }
+
   sendCommand(userCommand: string, commandType?: AngularCommandType): void {
     const request = new CommandRequest(userCommand);
 
@@ -145,6 +163,9 @@ export class AppComponent implements OnInit {
     // remove subscribe inside of subscribe
     this.commandService.sendCommand(request)
     .subscribe(commandId => {
+      if (commandType === AngularCommandType.serve) {
+        localStorage.setItem('ngServeCommandId', commandId);
+      }
       console.log('started working on command, ID:', commandId);
       this.subscription[commandId] = this.timedStatusCheck
         .subscribe(() => this.startCheckingCommand(commandId, commandType));
