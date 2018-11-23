@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
+//
+import { Observable } from 'rxjs';
+//
 import { CommandRequest } from '../../models/angular-command-request';
+import { CommandStatusResponse } from '../../models/command-status-response.interface';
+
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +25,8 @@ export class CommandService {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/projects`);
   }
 
-  checkCommandStatus(commandId: string) {
-    return this.http.get(`${this.BASE_URL}:${this.PORT}/status?id=${commandId}`);
+  checkCommandStatus(commandId: string): Observable<CommandStatusResponse> {
+    return this.http.get<CommandStatusResponse>(`${this.BASE_URL}:${this.PORT}/status?id=${commandId}`);
   }
 
   chooseProject(projectName: string) {

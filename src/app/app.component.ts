@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 
-import { interval, timer, empty } from 'rxjs';
-import { exhaustMap, mergeMap, catchError, tap } from 'rxjs/operators';
 import * as _ from 'lodash';
+import { timer, empty, throwError } from 'rxjs';
+import { exhaustMap, mergeMap, catchError, filter, take, tap } from 'rxjs/operators';
 
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 import { ErrorService } from './services/error/error.service';
 import { AngularCommandType } from './models/angular-command-type.enum';
+import { CommandStatusResponse } from './models/command-status-response.interface';
 
 @Component({
   selector: 'app-root',
@@ -20,10 +21,8 @@ export class AppComponent implements OnInit {
   title = 'ngWiz';
   isAngularProject: boolean;
   isReadyForWork = false;
-  runningCommands = {};
-  timedStatusCheck = interval(1000);
   KEEP_ALIVE_INTERVAL = 1000;
-  subscription = {};
+  COMMAND_STATUS_CHECK_INTERVAL = 1000;
   serveCommandId: string;
   availableProjects: string[] = [];
   isStoppingServeCommand = false;
@@ -52,80 +51,31 @@ export class AppComponent implements OnInit {
       .subscribe((projects: string[]) => this.availableProjects = projects);
   }
 
-  checkCommandStatus(commandId: string): void {
-    this.commandService.checkCommandStatus(commandId)
-      .subscribe(response => {
-        this.runningCommands[commandId] = response;
-      }, error => {
-        if (error.status === 404) {
-          console.log('command not found in server, stop checking');
-          this.doneCheckingCommand(commandId);
-        }
-      });
-  }
-
-  doneCheckingCommand(commandId: string): void {
-    this.subscription[commandId].unsubscribe();
-    this.subscription[commandId] = null;
-  }
-
-  commandDone(commandId: string, commandType?: AngularCommandType): void {
-    if (commandType === AngularCommandType.new) {
-      this.checkAngularProject();
-    }
-    this.runningCommands[commandId] = null;
-  }
-
-  startCheckingCommand(commandId: string, commandType?: AngularCommandType): void {
-    if (this.runningCommands[commandId]) {
-      const status = this.runningCommands[commandId].status;
-
-      if (status === AngularCliProcessStatus.done) {
-        this.doneCheckingCommand(commandId);
-        this.commandDone(commandId, commandType);
-        if (commandType === AngularCommandType.serve) {
-          this.serveCommandId = commandId;
-        }
-      } else if (status === AngularCliProcessStatus.error) {
-        this.doneCheckingCommand(commandId);
-      } else if (status === AngularCliProcessStatus.working) {
-        this.checkCommandStatus(commandId);
-      }
-    } else {
-      this.checkCommandStatus(commandId);
-    }
-  }
-
   chooseProject(projectName: string) {
-    this.commandService.chooseProject(projectName)
-      .subscribe(
-        res => this.isAngularProject = true,
-        () => {
-          this.errorService.addError({
-            errorText: 'Could not choose this project',
-            errorDescription: 'There was an error while trying to choose this project',
-          });
-          this.availableProjects.splice(this.availableProjects.indexOf(projectName));
+    this.commandService.chooseProject(projectName).subscribe(
+      res => this.isAngularProject = true,
+      () => {
+        this.errorService.addError({
+          errorText: 'Could not choose this project',
+          errorDescription: 'There was an error while trying to choose this project',
         });
-    }
+        this.availableProjects.splice(this.availableProjects.indexOf(projectName));
+      }
+    );
+  }
 
   keepAlive(): void {
-    this.subscription['TimedkeepAlive'] = timer(0, this.KEEP_ALIVE_INTERVAL)
-      .pipe(
-        exhaustMap(
-          () => this.commandService.keepAlive()
-        )
-      )
-      .subscribe(
-        response => {},
-        error => {
-          this.errorService.addError({
-            errorText: 'The server is offline',
-            errorDescription: 'please run the server and restart the client'
-          });
-          this.subscription['TimedkeepAlive'].unsubscribe();
-        }
-      );
+    timer(0, this.KEEP_ALIVE_INTERVAL).pipe(
+      exhaustMap(() => this.commandService.keepAlive()),
+      catchError(error => throwError(error).pipe(take(1)))
+    )
+    .subscribe(
+      _.noop,
+      error => this.errorService.addError({
+        errorText: 'The server is offline',
+        errorDescription: 'please run the server and restart the client'
+      })
+    );
   }
 
   leaveProject(): void {
@@ -192,17 +142,30 @@ export class AppComponent implements OnInit {
   sendCommand(userCommand: string, commandType?: AngularCommandType): void {
     const request = new CommandRequest(userCommand);
 
-    // TO-DO:
-    // remove subscribe inside of subscribe
-    this.commandService.sendCommand(request)
-    .subscribe(commandId => {
-      if (commandType === AngularCommandType.serve) {
-        localStorage.setItem('ngServeCommandId', commandId);
-      }
-      console.log('started working on command, ID:', commandId);
-      this.subscription[commandId] = this.timedStatusCheck
-        .subscribe(() => this.startCheckingCommand(commandId, commandType));
+    this.commandService.sendCommand(request).pipe(
+      mergeMap(commandId => timer(0, this.COMMAND_STATUS_CHECK_INTERVAL)
+        .pipe(
+          mergeMap(() => this.commandService.checkCommandStatus(commandId)),
+          filter((response: CommandStatusResponse) => response.status !== AngularCliProcessStatus.working),
+          take(1)
+        )
+      )
+    )
+    .subscribe(response => {
+      switch (response.status) {
+        case AngularCliProcessStatus.done:
+          this.commandDone(response, commandType);
+          break;
+        }
     });
+  }
+
+  commandDone(response: CommandStatusResponse, commandType?: AngularCommandType) {
+    if (commandType === AngularCommandType.new) {
+      this.checkAngularProject();
+    } else if (commandType === AngularCommandType.serve) {
+      this.serveCommandId = response.id;
+    }
   }
 
   sendServeCommand(serveCommand: string): void {

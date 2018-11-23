@@ -11,6 +11,7 @@ import { AngularCliProcessStatus } from './models/angular-cli-process-status.enu
 import { AngularProjectChecker } from './angular-project-checker';
 import { printLogo } from './logo-printer.helper';
 import { NgWizLogger } from './ngWizLogger';
+import { CommandStatusResponse } from './models/command-status-response.interface';
 
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/ngWiz');
@@ -123,7 +124,7 @@ app.get('/status', (req, res) => {
 
   if (processRunner.runningProcesses[id]) {
     const processStatus = processRunner.runningProcesses[id].status;
-    res.send({status: processStatus});
+    res.send(<CommandStatusResponse>{id: id, status: processStatus});
     if (processStatus === AngularCliProcessStatus.done
       && !processRunner.runningProcesses[id].command.includes('ng serve ')) {
       processRunner.runningProcesses[id] = null;

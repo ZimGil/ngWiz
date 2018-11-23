@@ -1,5 +1,7 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-
+//
+import * as _ from 'lodash';
+//
 import { AngularCliCommand } from '../../models/angular-cli-command.interface';
 import { NgserveOptions } from '../../default-values/ng-serve-options';
 import { CommandService } from './../../services/command/command.service';
@@ -33,22 +35,6 @@ export class ServeComponent {
 
   stopServing(): void {
     this.serveStopper.emit(this.serveCommandId);
-    // this.isStoppingServeCommand = true;
-    // this.commandService.stopServing(this.serveCommandId)
-    // .subscribe(
-    //   () => {},
-    //   error => {
-    //     this.errorService.addError({
-    //       errorText: 'The "ng serve" command you\'re trying to stop was not found',
-    //       errorDescription: 'The server is offline or have been restarted since you\'ve run this command'
-    //     });
-    //   },
-    //   () => {
-    //     this.serveCommandId = null;
-    //     localStorage.removeItem('ngServeCommandId');
-    //     this.isStoppingServeCommand = false;
-    //   }
-    // );
   }
 
   isPortValid(): boolean {
