@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { interval, timer, empty } from 'rxjs';
-import { exhaustMap, mergeMap } from 'rxjs/operators';
+import { exhaustMap, mergeMap, catchError } from 'rxjs/operators';
 
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
@@ -127,15 +127,22 @@ export class AppComponent implements OnInit {
   }
 
   leaveProject(): void {
-    this.commandService.leaveProject()
-      .subscribe(
-        res => this.isAngularProject = false,
-        () => {
-          this.errorService.addError({
-            errorText: 'Unable to leave this project',
-            errorDescription: 'To run ngWiz on another project or to create a new one, please run it in the apropriate project direcroty'
-          });
+    this.commandService.leaveProject().pipe(
+      catchError(() => {
+        this.errorService.addError({
+          errorText: 'Unable to leave this project',
+          errorDescription: 'To run ngWiz on another project or to create a new one, please run it in the apropriate project direcroty'
         });
+        return empty();
+      }),
+      mergeMap(res => {
+          this.isAngularProject = false;
+          return this.commandService.getProjects();
+      })
+    )
+    .subscribe((projects: string[]) => {
+      this.availableProjects = projects;
+    });
   }
 
   checkIfRunningServeCommand(): void {
