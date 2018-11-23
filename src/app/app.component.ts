@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import * as _ from 'lodash';
-import { timer, empty, throwError } from 'rxjs';
+import { timer, empty, throwError, of } from 'rxjs';
 import { exhaustMap, mergeMap, catchError, filter, take, tap } from 'rxjs/operators';
 
 import { CommandService } from './services/command/command.service';
@@ -143,13 +143,22 @@ export class AppComponent implements OnInit {
     const request = new CommandRequest(userCommand);
 
     this.commandService.sendCommand(request).pipe(
-      mergeMap(commandId => timer(0, this.COMMAND_STATUS_CHECK_INTERVAL)
+      mergeMap(commandId => {
+        if (commandType === AngularCommandType.serve) {
+          this.serveCommandId = commandId;
+        }
+        return timer(0, this.COMMAND_STATUS_CHECK_INTERVAL)
         .pipe(
-          mergeMap(() => this.commandService.checkCommandStatus(commandId)),
+          mergeMap(() => {
+            if (commandType === AngularCommandType.serve && this.isStoppingServeCommand) {
+              return of({id: '', status: AngularCliProcessStatus.error});
+            }
+            return this.commandService.checkCommandStatus(commandId);
+          }),
           filter((response: CommandStatusResponse) => response.status !== AngularCliProcessStatus.working),
           take(1)
-        )
-      )
+        );
+      })
     )
     .subscribe(response => {
       switch (response.status) {
