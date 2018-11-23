@@ -124,21 +124,20 @@ export class AppComponent implements OnInit {
   }
 
   leaveProject(): void {
-    this.commandService.leaveProject()
-    .pipe(
-      catchError( () => {
+    this.commandService.leaveProject().pipe(
+      catchError(() => {
         this.errorService.addError({
           errorText: 'Unable to leave this project',
           errorDescription: 'To run ngWiz on another project or to create a new one, please run it in the apropriate project direcroty'
         });
         return empty();
       }),
-      mergeMap(
-        res => {
+      mergeMap(res => {
           this.isAngularProject = false;
           return this.commandService.getProjects();
       })
-    ).subscribe((projects: string[]) => {
+    )
+    .subscribe((projects: string[]) => {
       this.availableProjects = projects;
     });
   }
