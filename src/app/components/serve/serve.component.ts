@@ -1,5 +1,7 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-
+//
+import * as _ from 'lodash';
+//
 import { AngularCliCommand } from '../../models/angular-cli-command.interface';
 import { NgserveOptions } from '../../default-values/ng-serve-options';
 import { CommandService } from './../../services/command/command.service';
@@ -34,7 +36,7 @@ export class ServeComponent {
     this.isStoppingServeCommand = true;
     this.commandService.stopServing(this.serveCommandId)
     .subscribe(
-      () => {},
+      _.noop,
       error => {
         this.errorService.addError({
           errorText: 'The "ng serve" command you\'re trying to stop was not found',
