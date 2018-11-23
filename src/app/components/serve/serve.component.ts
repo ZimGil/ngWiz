@@ -16,10 +16,11 @@ export class ServeComponent {
   private readonly MAXIMUM_PORT = 99999;
 
   @Output() sendCommand = new EventEmitter<string>();
+  @Output() serveStopper = new EventEmitter<string>();
   @Input() serveCommandId: string;
+  @Input() isStoppingServeCommand: boolean;
   command: AngularCliCommand;
   options = new NgserveOptions();
-  isStoppingServeCommand = false;
 
   constructor(
     private commandService: CommandService,
@@ -31,22 +32,23 @@ export class ServeComponent {
   }
 
   stopServing(): void {
-    this.isStoppingServeCommand = true;
-    this.commandService.stopServing(this.serveCommandId)
-    .subscribe(
-      () => {},
-      error => {
-        this.errorService.addError({
-          errorText: 'The "ng serve" command you\'re trying to stop was not found',
-          errorDescription: 'The server is offline or have been restarted since you\'ve run this command'
-        });
-      },
-      () => {
-        this.serveCommandId = null;
-        localStorage.removeItem('ngServeCommandId');
-        this.isStoppingServeCommand = false;
-      }
-    );
+    this.serveStopper.emit(this.serveCommandId);
+    // this.isStoppingServeCommand = true;
+    // this.commandService.stopServing(this.serveCommandId)
+    // .subscribe(
+    //   () => {},
+    //   error => {
+    //     this.errorService.addError({
+    //       errorText: 'The "ng serve" command you\'re trying to stop was not found',
+    //       errorDescription: 'The server is offline or have been restarted since you\'ve run this command'
+    //     });
+    //   },
+    //   () => {
+    //     this.serveCommandId = null;
+    //     localStorage.removeItem('ngServeCommandId');
+    //     this.isStoppingServeCommand = false;
+    //   }
+    // );
   }
 
   isPortValid(): boolean {

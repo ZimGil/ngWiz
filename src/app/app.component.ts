@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { interval, timer, empty } from 'rxjs';
-import { exhaustMap, mergeMap, catchError } from 'rxjs/operators';
+import { exhaustMap, mergeMap, catchError, tap } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 import { CommandService } from './services/command/command.service';
@@ -26,6 +26,7 @@ export class AppComponent implements OnInit {
   subscription = {};
   serveCommandId: string;
   availableProjects: string[] = [];
+  isStoppingServeCommand = false;
 
   constructor(
     private commandService: CommandService,
@@ -141,19 +142,31 @@ export class AppComponent implements OnInit {
           return this.commandService.getProjects();
       })
     )
-    .pipe(mergeMap((projects: string[]) => {
+    .pipe(tap((projects: string[]) => {
       this.availableProjects = projects;
-      return this.commandService.stopServing(this.serveCommandId);
     }))
+    .subscribe(() => {
+      if (this.serveCommandId) {
+        this.stopServing(this.serveCommandId);
+      }
+    });
+  }
+
+  stopServing(serveCommandId): void {
+    this.isStoppingServeCommand = true;
+    this.commandService.stopServing(serveCommandId)
     .subscribe(
-      _.noop,
-      error => this.errorService.addError({
-        errorText: 'The "ng serve" command you\'re trying to stop was not found',
-        errorDescription: 'The server is offline or have been restarted since you\'ve run this command'
-      }),
+      () => {},
+      error => {
+        this.errorService.addError({
+          errorText: 'The "ng serve" command you\'re trying to stop was not found',
+          errorDescription: 'The server is offline or have been restarted since you\'ve run this command'
+        });
+      },
       () => {
         this.serveCommandId = null;
         localStorage.removeItem('ngServeCommandId');
+        this.isStoppingServeCommand = false;
       }
     );
   }
