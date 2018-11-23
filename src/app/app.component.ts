@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { interval, timer, empty } from 'rxjs';
 import { exhaustMap, mergeMap, catchError } from 'rxjs/operators';
+import * as _ from 'lodash';
 
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
@@ -139,26 +140,22 @@ export class AppComponent implements OnInit {
           this.isAngularProject = false;
           return this.commandService.getProjects();
       })
-    ).pipe(mergeMap((projects: string[]) => {
+    )
+    .pipe(mergeMap((projects: string[]) => {
       this.availableProjects = projects;
       return this.commandService.stopServing(this.serveCommandId);
-    })).subscribe(
+    }))
+    .subscribe(
       _.noop,
-      error => {
-        this.errorService.addError({
-          errorText: 'The "ng serve" command you\'re trying to stop was not found',
-          errorDescription: 'The server is offline or have been restarted since you\'ve run this command'
-        });
-      },
+      error => this.errorService.addError({
+        errorText: 'The "ng serve" command you\'re trying to stop was not found',
+        errorDescription: 'The server is offline or have been restarted since you\'ve run this command'
+      }),
       () => {
         this.serveCommandId = null;
         localStorage.removeItem('ngServeCommandId');
       }
     );
-
-    // .subscribe((projects: string[]) => {
-    //   this.availableProjects = projects;
-    // });
   }
 
   checkIfRunningServeCommand(): void {
