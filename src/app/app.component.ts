@@ -141,8 +141,7 @@ export class AppComponent implements OnInit {
   checkIfRunningServeCommand(): void {
     const savedCommandId = localStorage.getItem('ngServeCommandId');
     if (savedCommandId) {
-      this.commandService.checkCommandStatus(savedCommandId)
-      .subscribe(status => {
+      this.commandService.checkCommandStatus(savedCommandId).subscribe(status => {
         this.serveCommandId = savedCommandId;
         this.isAngularProject = true;
         this.isReadyForWork = true;

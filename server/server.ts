@@ -4,13 +4,13 @@ import compression = require('compression');
 import fs = require('fs');
 import childProcess = require('child_process');
 import colors = require('colors/safe');
+import { timer } from 'rxjs';
 //
 import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 import { AngularProjectChecker } from './angular-project-checker';
 import { printLogo } from './logo-printer.helper';
 import { NgWizLogger } from './ngWizLogger';
-import { timer } from 'rxjs';
 
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/ngWiz');

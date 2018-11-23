@@ -24,7 +24,7 @@ export class ServeComponent {
   constructor(
     private commandService: CommandService,
     private errorService: ErrorService
-    ) {}
+  ) {}
 
   startServing(): void {
     this.sendCommand.emit(this.options.createCommandString());
