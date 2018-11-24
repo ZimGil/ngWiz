@@ -11,6 +11,8 @@ import { AngularProjectChecker } from './angular-project-checker';
 import { printLogo } from './logo-printer.helper';
 import { NgWizLogger } from './ngWizLogger';
 import { CommandStatusResponse } from './models/command-status-response.interface';
+import { IsAngularProjectResponse } from 'server/models/is-angular-project-response.interface';
+import { GetProjectsResponse } from './models/get-projects-response.interface';
 
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/ngWiz');
@@ -51,10 +53,11 @@ app.get('/isAngularProject', (req, res) => {
   logger.log.debug('Request to check if running inside an Angular Project');
 
   new AngularProjectChecker().check()
-  .then(
-    projectFolder => res.send(true),
-    nonProjectFolder => res.send(false)
-  );
+  .then(projectFolder => true, () => false)
+  .then(result => res.send(<IsAngularProjectResponse>{
+    isAngularProject: !!result,
+    path: process.cwd()
+  }));
 });
 
 app.get('/stopServing', (req, res) => {
@@ -101,7 +104,7 @@ app.get('/projects', (req, res) => {
     }
   });
   logger.log.info(`Available projects: [${projects.join(', ')}]`);
-  res.send(projects);
+  res.send(<GetProjectsResponse>{projects: projects, path: process.cwd()});
 });
 
 app.get('/chooseProject', (req, res) => {
@@ -109,8 +112,9 @@ app.get('/chooseProject', (req, res) => {
   logger.log.debug(`Client ask to join project "${projectName}`);
   try {
     process.chdir(projectName);
-    logger.log.debug(`Joined project "${projectName}", current directory ${process.cwd()}`);
-    res.send();
+    const projectPath = process.cwd();
+    logger.log.debug(`Joined project "${projectName}", current directory ${projectPath}`);
+    res.send({path: projectPath});
   } catch (error) {
     logger.log.error(`Unable to join project "${projectName}"`);
     logger.log.error(error);

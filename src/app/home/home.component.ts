@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 import * as _ from 'lodash';
-import { timer, empty, throwError, of } from 'rxjs';
-import { exhaustMap, mergeMap, catchError, filter, take, tap } from 'rxjs/operators';
+import { timer, empty, throwError } from 'rxjs';
+import { exhaustMap, mergeMap, catchError, filter, take } from 'rxjs/operators';
 
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
@@ -10,6 +10,8 @@ import { AngularCliProcessStatus } from './models/angular-cli-process-status.enu
 import { ErrorService } from './services/error/error.service';
 import { AngularCommandType } from './models/angular-command-type.enum';
 import { CommandStatusResponse } from './models/command-status-response.interface';
+import { IsAngularProjectResponse } from './models/is-angular-project-response.interface';
+import { GetProjectsResponse } from './models/get-projects-response.interface';
 
 @Component({
   selector: 'app-home',
@@ -26,6 +28,7 @@ export class HomeComponent implements OnInit {
   isServing: boolean;
   availableProjects: string[] = [];
   isStoppingServeCommand = false;
+  currentWorkingDir: string;
 
   constructor(
     private commandService: CommandService,
@@ -39,29 +42,31 @@ export class HomeComponent implements OnInit {
 
   checkAngularProject(): void {
     this.isReadyForWork = false;
-    this.commandService.isAngularProject()
-      .pipe(
-        mergeMap(
-          res => {
-            this.isAngularProject = !!res;
-            this.isReadyForWork = true;
-            return this.isAngularProject ? empty() : this.commandService.getProjects();
-        })
-      )
-      .subscribe((projects: string[]) => this.availableProjects = projects);
+    this.commandService.isAngularProject().pipe(
+      mergeMap((res: IsAngularProjectResponse) => {
+        this.currentWorkingDir = res.path;
+        this.isAngularProject = res.isAngularProject;
+        this.isReadyForWork = true;
+        return this.isAngularProject ? empty() : this.commandService.getProjects();
+      })
+    )
+    .subscribe((result: GetProjectsResponse) => this.availableProjects = result.projects);
   }
 
   chooseProject(projectName: string) {
-    this.commandService.chooseProject(projectName).subscribe(
-      res => this.isAngularProject = true,
-      () => {
+    this.commandService.chooseProject(projectName).pipe(
+      catchError(() => {
         this.errorService.addError({
           errorText: 'Could not choose this project',
           errorDescription: 'There was an error while trying to choose this project',
         });
-        this.availableProjects.splice(this.availableProjects.indexOf(projectName));
-      }
-    );
+        this.availableProjects.splice(this.availableProjects.indexOf(projectName), 1);
+        return empty();
+      })
+    ).subscribe((res: {path: string}) => {
+      this.isAngularProject = true;
+      this.currentWorkingDir = res.path;
+    });
   }
 
   keepAlive(): void {
@@ -90,12 +95,12 @@ export class HomeComponent implements OnInit {
       mergeMap(res => {
           this.isAngularProject = false;
           return this.commandService.getProjects();
-      }),
-      tap((projects: string[]) => {
-        this.availableProjects = projects;
       })
     )
-    .subscribe(() => {
+    .subscribe((res: GetProjectsResponse) => {
+      this.availableProjects = res.projects;
+      this.currentWorkingDir = res.path;
+
       if (this.isServing) {
         this.stopServing();
       }

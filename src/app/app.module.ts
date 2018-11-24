@@ -13,7 +13,6 @@ import { PopupErrorComponent } from './home/components/popup-error/popup-error.c
 import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,
