@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 import * as _ from 'lodash';
-import { timer, empty, throwError } from 'rxjs';
-import { exhaustMap, mergeMap, catchError, filter, take } from 'rxjs/operators';
+import { timer, empty, throwError, of } from 'rxjs';
+import { exhaustMap, mergeMap, catchError, filter, take, tap } from 'rxjs/operators';
 
 import { CommandService } from './services/command/command.service';
 import { CommandRequest } from './models/angular-command-request';
@@ -23,8 +23,9 @@ export class AppComponent implements OnInit {
   isReadyForWork = false;
   KEEP_ALIVE_INTERVAL = 1000;
   COMMAND_STATUS_CHECK_INTERVAL = 1000;
-  serveCommandId: string;
+  isServing: boolean;
   availableProjects: string[] = [];
+  isStoppingServeCommand = false;
 
   constructor(
     private commandService: CommandService,
@@ -89,39 +90,54 @@ export class AppComponent implements OnInit {
       mergeMap(res => {
           this.isAngularProject = false;
           return this.commandService.getProjects();
+      }),
+      tap((projects: string[]) => {
+        this.availableProjects = projects;
       })
     )
-    .subscribe((projects: string[]) => {
-      this.availableProjects = projects;
+    .subscribe(() => {
+      if (this.isServing) {
+        this.stopServing();
+      }
     });
   }
 
+  stopServing(): void {
+    this.isStoppingServeCommand = true;
+    this.commandService.stopServing()
+    .subscribe(
+      () => {
+        this.isServing = false;
+        this.isStoppingServeCommand = false;
+      },
+      error => {
+        this.errorService.addError({
+          errorText: 'The "ng serve" command you\'re trying to stop was not found',
+          errorDescription: 'The server is offline or have been restarted since you\'ve run this command'
+        });
+      }
+    );
+  }
+
   checkIfRunningServeCommand(): void {
-    const savedCommandId = localStorage.getItem('ngServeCommandId');
-    if (savedCommandId) {
-      this.commandService.checkCommandStatus(savedCommandId).subscribe(status => {
-        this.serveCommandId = savedCommandId;
+    this.commandService.isServing().subscribe(isServing => {
+      this.isServing = isServing;
+      if (isServing) {
         this.isAngularProject = true;
         this.isReadyForWork = true;
-      }, error => {
-        this.serveCommandId = null;
+      } else {
         this.checkAngularProject();
-        localStorage.removeItem('ngServeCommandId');
-      });
-    } else {
-      this.serveCommandId = null;
-      this.checkAngularProject();
-    }
+      }
+    });
   }
 
   sendCommand(userCommand: string, commandType?: AngularCommandType): void {
     const request = new CommandRequest(userCommand);
 
     this.commandService.sendCommand(request).pipe(
-      mergeMap(commandId => timer(0, this.COMMAND_STATUS_CHECK_INTERVAL)
-        .pipe(
+      mergeMap(commandId => timer(0, this.COMMAND_STATUS_CHECK_INTERVAL).pipe(
           mergeMap(() => this.commandService.checkCommandStatus(commandId)),
-          filter((response: CommandStatusResponse) => response.status !== AngularCliProcessStatus.working),
+          filter(response => response.status !== AngularCliProcessStatus.working),
           take(1)
         )
       )
@@ -138,13 +154,12 @@ export class AppComponent implements OnInit {
   commandDone(response: CommandStatusResponse, commandType?: AngularCommandType) {
     if (commandType === AngularCommandType.new) {
       this.checkAngularProject();
-    } else if (commandType === AngularCommandType.serve) {
-      this.serveCommandId = response.id;
     }
   }
 
   sendServeCommand(serveCommand: string): void {
     this.sendCommand(serveCommand, AngularCommandType.serve);
+    this.isServing = true;
   }
 
   sendNewCommand(newCommand: string): void {

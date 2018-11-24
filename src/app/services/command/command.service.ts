@@ -36,8 +36,12 @@ export class CommandService {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/keepAlive`);
   }
 
-  stopServing(serveCommandId: string) {
-    return this.http.get(`${this.BASE_URL}:${this.PORT}/stopServing?id=${serveCommandId}`);
+  stopServing() {
+    return this.http.get(`${this.BASE_URL}:${this.PORT}/stopServing`);
+  }
+
+  isServing(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.BASE_URL}:${this.PORT}/isServing`);
   }
 
   leaveProject() {
