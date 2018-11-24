@@ -12,8 +12,6 @@ import { CommandService } from './home/services/command/command.service';
 import { PopupErrorComponent } from './home/components/popup-error/popup-error.component';
 import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { EmptyResponseBodyErrorInterceptor } from './interceptors/empty-response-body-error.interceptor';
-
 
 @NgModule({
   declarations: [
@@ -31,14 +29,7 @@ import { EmptyResponseBodyErrorInterceptor } from './interceptors/empty-response
     HttpClientModule,
     AppRoutingModule
   ],
-  providers: [
-    CommandService,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: EmptyResponseBodyErrorInterceptor,
-      multi: true
-    },
-  ],
+  providers: [CommandService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

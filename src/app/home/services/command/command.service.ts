@@ -33,10 +33,6 @@ export class CommandService {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/chooseProject?name=${projectName}`);
   }
 
-  getPath(): Observable<string> {
-    return this.http.get<string>(`${this.BASE_URL}:${this.PORT}/path`);
-  }
-
   keepAlive() {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/keepAlive`);
   }
