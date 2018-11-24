@@ -3,12 +3,14 @@ import path = require('path');
 import compression = require('compression');
 import fs = require('fs');
 import childProcess = require('child_process');
+import { timer } from 'rxjs';
 //
 import { ProcessRunner } from './process-runner';
 import { AngularCliProcessStatus } from './models/angular-cli-process-status.enum';
 import { AngularProjectChecker } from './angular-project-checker';
 import { printLogo } from './logo-printer.helper';
 import { NgWizLogger } from './ngWizLogger';
+import { CommandStatusResponse } from './models/command-status-response.interface';
 
 const app = express();
 const STATIC_FILES_LOCATION = path.join(__dirname, '../../..', '/dist/ngWiz');
@@ -16,6 +18,7 @@ const PORT = 3000;
 const logger = new NgWizLogger('debug');
 
 let isOpenBrowser;
+let ngServeCommandId = null;
 
 process.argv.forEach((val, index, array) => {
   if (val === '-o') {
@@ -39,6 +42,10 @@ app.get('/', (req, res) => {
   res.sendFile(`${STATIC_FILES_LOCATION}/index.html`);
 });
 
+app.get('/isServing', (req, res) => {
+  res.send(!!ngServeCommandId);
+});
+
 app.get('/isAngularProject', (req, res) => {
   logger.log.debug('Request to check if running inside an Angular Project');
 
@@ -50,22 +57,25 @@ app.get('/isAngularProject', (req, res) => {
 });
 
 app.get('/stopServing', (req, res) => {
-  const id = req.query.id;
-  logger.log.debug(`Request to stop "ng serve" command, ID: ${id}`);
-
-  if (processRunner.runningProcesses[id]) {
-    const port = processRunner.runningProcesses[id].command.match(/\s([0-9]{4,5})\s?/g)[0].replace(/\s/g, '');
+  logger.log.debug(`Request to stop "ng serve" command`);
+  if (processRunner.runningProcesses[ngServeCommandId]) {
+    const port = processRunner.runningProcesses[ngServeCommandId].command.match(/\s([0-9]{4,5})\s?/g)[0].replace(/\s/g, '');
      const killProcess = {
       id: 'killer',
       params: `for /f "tokens=5" %a in ('netstat -ano ^| find "${port}" ^| find "LISTENING"') do taskkill /f /pid %a`
     };
-    processRunner.run(killProcess);
-    logger.log.debug(`Command killed, port: ${port} is now free to use`);
-    processRunner.runningProcesses['killer'] = null;
-    res.send({id: req.query.id});
-    processRunner.runningProcesses[id] = null;
+    const ngServeStopper = timer(0, 500).subscribe(() => {
+      if (processRunner.runningProcesses[ngServeCommandId].status === AngularCliProcessStatus.done) {
+        processRunner.run(killProcess);
+        processRunner.runningProcesses['killer'] = null;
+        res.send();
+        processRunner.runningProcesses[ngServeCommandId] = null;
+        ngServeCommandId = null;
+        ngServeStopper.unsubscribe();
+      }
+    });
   } else {
-    logger.log.error(`Could not find command with ID: ${id}`);
+    logger.log.error(`Could not find "ng serve" command`);
     res.sendStatus(404);
   }
 });
@@ -132,7 +142,7 @@ app.get('/status', (req, res) => {
     const processStatus = processRunner.runningProcesses[id].status;
     const printableStatus = AngularCliProcessStatus[processStatus].toLocaleUpperCase();
     logger.log.debug(`Command status check - process ID: ${id} status: ${printableStatus}`);
-    res.send({status: processStatus});
+    res.send(<CommandStatusResponse>{id: id, status: processStatus});
     if (processStatus === AngularCliProcessStatus.done
       && !processRunner.runningProcesses[id].command.includes('ng serve ')) {
       processRunner.runningProcesses[id] = null;
@@ -140,7 +150,7 @@ app.get('/status', (req, res) => {
     }
   } else {
     logger.log.error(`Command status check failed - process ID ${id} not found`);
-    res.sendStatus(404);
+    res.send(<CommandStatusResponse>{id: id, status: AngularCliProcessStatus.error});
   }
 });
 
@@ -150,6 +160,10 @@ app.post('/command', (req, res) => {
     id: ProcessRunner.guid(),
     params: req.body.command
   };
+
+  if (currentProcess.params.includes('ng serve')) {
+    ngServeCommandId = currentProcess.id;
+  }
 
   try {
     logger.log.debug(`Running command: "${currentProcess.params}" under ID: [${currentProcess.id}]`);

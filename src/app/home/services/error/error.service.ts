@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PopUpError } from './../../models/pop-up-error.interface';
+import { PopUpError } from '../../models/pop-up-error.interface';
 
 @Injectable({
   providedIn: 'root'
