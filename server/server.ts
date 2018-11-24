@@ -43,6 +43,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/isServing', (req, res) => {
+  logger.log.debug(`Client ask if currently running "ng serve", answering ${!!ngServeCommandId}`);
   res.send(!!ngServeCommandId);
 });
 
