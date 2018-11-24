@@ -34,8 +34,8 @@ app.use(express.static(STATIC_FILES_LOCATION));
 app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded()); // to support URL-encoded bodies
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 
@@ -164,7 +164,7 @@ app.post('/command', (req, res) => {
 app.post('/DEVchangeDir', (req, res) => {
   process.chdir(req.body.folder);
   res.send(`Working directory chaged to: ${process.cwd()}`);
-})
+});
 
 app.listen(PORT, () => {
   console.clear();
@@ -178,7 +178,7 @@ app.listen(PORT, () => {
 
 function openBrowser(port) {
   const url = `http://localhost:${port}`;
-  const start = process.platform === 'darwin'? 'open': process.platform === 'win32'? 'start': 'xdg-open';
+  const start = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
 
   childProcess.exec(`${start} ${url}`);
 }

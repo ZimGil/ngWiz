@@ -4,8 +4,8 @@ import * as _ from 'lodash';
 //
 import { AngularCliCommand } from '../../models/angular-cli-command.interface';
 import { NgserveOptions } from '../../default-values/ng-serve-options';
-import { CommandService } from '../../services/command/command.service';
-import { ErrorService } from '../../services/error/error.service';
+import { CommandService } from './../../services/command/command.service';
+import { ErrorService } from './../../services/error/error.service';
 
 @Component({
   selector: 'app-serve',
