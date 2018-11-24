@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import * as _ from 'lodash';
-import { timer, empty, throwError, of } from 'rxjs';
+import { timer, empty, throwError } from 'rxjs';
 import { exhaustMap, mergeMap, catchError, filter, take, tap } from 'rxjs/operators';
 
 import { CommandService } from './services/command/command.service';
@@ -36,7 +36,6 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.keepAlive();
     this.checkIfRunningServeCommand();
-    this.updateCWD();
   }
 
   checkAngularProject(): void {
@@ -47,23 +46,34 @@ export class HomeComponent implements OnInit {
           res => {
             this.isAngularProject = !!res;
             this.isReadyForWork = true;
-            return this.isAngularProject ? empty() : this.commandService.getProjects();
+            return this.commandService.getPath();
+        }),
+        mergeMap(res => {
+          this.currentWorkingDir = res;
+          return this.isAngularProject ? empty() : this.commandService.getProjects();
         })
       )
       .subscribe((projects: string[]) => this.availableProjects = projects);
   }
 
   chooseProject(projectName: string) {
-    this.commandService.chooseProject(projectName).subscribe(
-      res => this.isAngularProject = true,
-      () => {
-        this.errorService.addError({
-          errorText: 'Could not choose this project',
-          errorDescription: 'There was an error while trying to choose this project',
-        });
-        this.availableProjects.splice(this.availableProjects.indexOf(projectName));
-      }
-    );
+    this.commandService.chooseProject(projectName).pipe(
+      mergeMap(
+        res => {
+          this.isAngularProject = true;
+          return this.commandService.getPath();
+      }),
+      catchError(
+        () => {
+          this.errorService.addError({
+           errorText: 'Could not choose this project',
+           errorDescription: 'There was an error while trying to choose this project',
+          });
+          this.availableProjects.splice(this.availableProjects.indexOf(projectName), 1);
+          return empty();
+        }
+      )
+    ).subscribe(res => this.currentWorkingDir = res);
   }
 
   keepAlive(): void {
@@ -137,10 +147,6 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  updateCWD(): void {
-    this.commandService.getPath().subscribe(res => this.currentWorkingDir = res);
-  }
-
   sendCommand(userCommand: string, commandType?: AngularCommandType): void {
     const request = new CommandRequest(userCommand);
 
@@ -166,6 +172,10 @@ export class HomeComponent implements OnInit {
       this.checkAngularProject();
       this.updateCWD();
     }
+  }
+
+  updateCWD(): void {
+    this.commandService.getPath().subscribe(res => this.currentWorkingDir = res);
   }
 
   sendServeCommand(serveCommand: string): void {

@@ -15,7 +15,7 @@ export class EmptyResponseBodyErrorInterceptor implements HttpInterceptor {
         catchError((err: HttpErrorResponse) => {
           if (err.status >= 200 && err.status < 300) {
             const res = new HttpResponse({
-              body: null,
+              body: err.error.text,
               headers: err.headers,
               status: err.status,
               statusText: err.statusText,

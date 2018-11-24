@@ -19,6 +19,7 @@ const logger = new NgWizLogger('debug');
 
 let isOpenBrowser;
 let ngServeCommandId = null;
+let isCheckedIfAngularProject = false;
 
 process.argv.forEach((val, index, array) => {
   if (val === '-o') {
@@ -55,9 +56,15 @@ app.get('/isAngularProject', (req, res) => {
     projectFolder => res.send(true),
     nonProjectFolder => res.send(false)
   );
+
+  isCheckedIfAngularProject = true;
 });
 
 app.get('/path', (req, res) => {
+  if (!isCheckedIfAngularProject) {
+    new AngularProjectChecker().check();
+  }
+  logger.log.debug(`Client request for current directory, sending: "${process.cwd()}`);
   res.send(process.cwd());
 });
 
