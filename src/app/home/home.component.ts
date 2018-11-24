@@ -26,6 +26,7 @@ export class HomeComponent implements OnInit {
   isServing: boolean;
   availableProjects: string[] = [];
   isStoppingServeCommand = false;
+  currentWorkingDir: string = null;
 
   constructor(
     private commandService: CommandService,
@@ -35,6 +36,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.keepAlive();
     this.checkIfRunningServeCommand();
+    this.updateCWD();
   }
 
   checkAngularProject(): void {
@@ -89,7 +91,11 @@ export class HomeComponent implements OnInit {
       }),
       mergeMap(res => {
           this.isAngularProject = false;
-          return this.commandService.getProjects();
+          return this.commandService.getPath();
+      }),
+      mergeMap(res => {
+        this.currentWorkingDir = res;
+        return this.commandService.getProjects();
       }),
       tap((projects: string[]) => {
         this.availableProjects = projects;
@@ -131,6 +137,10 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  updateCWD(): void {
+    this.commandService.getPath().subscribe(res => this.currentWorkingDir = res);
+  }
+
   sendCommand(userCommand: string, commandType?: AngularCommandType): void {
     const request = new CommandRequest(userCommand);
 
@@ -154,6 +164,7 @@ export class HomeComponent implements OnInit {
   commandDone(response: CommandStatusResponse, commandType?: AngularCommandType) {
     if (commandType === AngularCommandType.new) {
       this.checkAngularProject();
+      this.updateCWD();
     }
   }
 

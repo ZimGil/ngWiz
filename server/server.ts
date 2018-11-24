@@ -57,6 +57,10 @@ app.get('/isAngularProject', (req, res) => {
   );
 });
 
+app.get('/path', (req, res) => {
+  res.send(process.cwd());
+});
+
 app.get('/stopServing', (req, res) => {
   logger.log.debug(`Request to stop "ng serve" command`);
   if (processRunner.runningProcesses[ngServeCommandId]) {
