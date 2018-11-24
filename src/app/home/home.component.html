@@ -14,7 +14,9 @@
     <ng-container *ngIf="isAngularProject">
         <app-serve
             (sendCommand)="sendServeCommand($event)"
-            [serveCommandId]="serveCommandId">
+            (serveStopper)="stopServing($event)"
+            [isStoppingServeCommand]="isStoppingServeCommand"
+            [isServing]="isServing">
         </app-serve>
         <app-generate (sendCommand)="sendCommand($event)"></app-generate>
         <button
