@@ -76,7 +76,8 @@ export class ProcessRunner {
     handleServeErrorEvent(error, runningProcess: AngularCliProcess) {
       if (
         error.includes('Error: Command failed: ng serve') ||
-        error.includes(`Use '--port' to specify a different port`)) {
+        error.includes(`Use '--port' to specify a different port`)
+        ) {
           runningProcess.status = AngularCliProcessStatus.error;
           logger.log.error(`Command: "${runningProcess.command}" failed:`, error);
       }
@@ -87,7 +88,8 @@ export class ProcessRunner {
         runningProcess.status = AngularCliProcessStatus.done;
         if (
           runningProcess.command.toString().includes(' new ') &&
-          runningProcess.status === AngularCliProcessStatus.done) {
+          runningProcess.status === AngularCliProcessStatus.done
+          ) {
             this.changeProjectFolder(runningProcess);
         }
       }
@@ -109,13 +111,15 @@ export class ProcessRunner {
         }
       };
 
-      if (this.isAngularCommand(runningProcess.command)
-        || currentProcess.id === 'killer') {
-        runningProcess.process = childProcess.exec(currentProcess.params, callback);
+      if (
+        this.isAngularCommand(runningProcess.command) ||
+        currentProcess.id === 'killer'
+        ) {
+          runningProcess.process = childProcess.exec(currentProcess.params, callback);
 
-        runningProcess.process.stdout.on('data', (data) => this.handleDataEvent(data, runningProcess));
-        runningProcess.process.stderr.on('data', (error) => this.handleErrorEvent(error, runningProcess));
-        runningProcess.process.stdout.on('close', () => this.handleCloseEvent(runningProcess));
+          runningProcess.process.stdout.on('data', (data) => this.handleDataEvent(data, runningProcess));
+          runningProcess.process.stderr.on('data', (error) => this.handleErrorEvent(error, runningProcess));
+          runningProcess.process.stdout.on('close', () => this.handleCloseEvent(runningProcess));
       } else {
         runningProcess.status = AngularCliProcessStatus.error;
         throw new Error('Not not angular command');
