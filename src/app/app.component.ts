@@ -106,16 +106,15 @@ export class AppComponent implements OnInit {
     this.isStoppingServeCommand = true;
     this.commandService.stopServing()
     .subscribe(
-      () => {},
+      () => {
+        this.isServing = false;
+        this.isStoppingServeCommand = false;
+      },
       error => {
         this.errorService.addError({
           errorText: 'The "ng serve" command you\'re trying to stop was not found',
           errorDescription: 'The server is offline or have been restarted since you\'ve run this command'
         });
-      },
-      () => {
-        this.isServing = false;
-        this.isStoppingServeCommand = false;
       }
     );
   }
