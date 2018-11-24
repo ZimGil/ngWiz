@@ -19,6 +19,7 @@ const PORT = 3000;
 const logger = new NgWizLogger('debug');
 
 let isOpenBrowser;
+let ngServeCommandId = null;
 
 process.argv.forEach((val, index, array) => {
   if (val === '-o') {
@@ -42,6 +43,10 @@ app.get('/', (req, res) => {
   res.sendFile(`${STATIC_FILES_LOCATION}/index.html`);
 });
 
+app.get('/isServing', (req, res) => {
+  res.send(!!ngServeCommandId);
+});
+
 app.get('/isAngularProject', (req, res) => {
   const angularProjectChecker = new AngularProjectChecker();
 
@@ -53,19 +58,19 @@ app.get('/isAngularProject', (req, res) => {
 });
 
 app.get('/stopServing', (req, res) => {
-  const id = req.query.id;
-  if (processRunner.runningProcesses[id]) {
-    const port = processRunner.runningProcesses[id].command.match(/\s([0-9]{4,5})\s?/g)[0].replace(/\s/g, '');
+  if (processRunner.runningProcesses[ngServeCommandId]) {
+    const port = processRunner.runningProcesses[ngServeCommandId].command.match(/\s([0-9]{4,5})\s?/g)[0].replace(/\s/g, '');
      const killProcess = {
       id: 'killer',
       params: `for /f "tokens=5" %a in ('netstat -ano ^| find "${port}" ^| find "LISTENING"') do taskkill /f /pid %a`
     };
     const ngServeStopper = timer(0, 500).subscribe(() => {
-      if (processRunner.runningProcesses[id].status === AngularCliProcessStatus.done) {
+      if (processRunner.runningProcesses[ngServeCommandId].status === AngularCliProcessStatus.done) {
         processRunner.run(killProcess);
         processRunner.runningProcesses['killer'] = null;
-        res.send({id: req.query.id});
-        processRunner.runningProcesses[id] = null;
+        res.send();
+        processRunner.runningProcesses[ngServeCommandId] = null;
+        ngServeCommandId = null;
         ngServeStopper.unsubscribe();
       }
     });
@@ -130,7 +135,7 @@ app.get('/status', (req, res) => {
       processRunner.runningProcesses[id] = null;
     }
   } else {
-    res.sendStatus(404);
+    res.send(<CommandStatusResponse>{id: id, status: AngularCliProcessStatus.error});
   }
 });
 
@@ -140,18 +145,22 @@ app.post('/command', (req, res) => {
     const currentProcess = {
       id: ProcessRunner.guid(),
       params: req.body.command
+    };
+
+    if (currentProcess.params.includes('ng serve')) {
+      ngServeCommandId = currentProcess.id;
     }
-    
+
     processRunner.run(currentProcess);
-    res.send(currentProcess.id);  
-  }
-  catch(error) {
+    res.send(currentProcess.id);
+
+  } catch (error) {
     console.log(error);
     res.status(400).end();
   }
 });
 
-//this function will help us in development using Postman to change the working directory
+// this function will help us in development using Postman to change the working directory
 app.post('/DEVchangeDir', (req, res) => {
   process.chdir(req.body.folder);
   res.send(`Working directory chaged to: ${process.cwd()}`);

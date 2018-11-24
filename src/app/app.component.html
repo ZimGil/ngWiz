@@ -16,7 +16,7 @@
             (sendCommand)="sendServeCommand($event)"
             (serveStopper)="stopServing($event)"
             [isStoppingServeCommand]="isStoppingServeCommand"
-            [serveCommandId]="serveCommandId">
+            [isServing]="isServing">
         </app-serve>
         <app-generate (sendCommand)="sendCommand($event)"></app-generate>
         <button

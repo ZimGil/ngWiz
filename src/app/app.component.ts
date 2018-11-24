@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
   isReadyForWork = false;
   KEEP_ALIVE_INTERVAL = 1000;
   COMMAND_STATUS_CHECK_INTERVAL = 1000;
-  serveCommandId: string;
+  isServing: boolean;
   availableProjects: string[] = [];
   isStoppingServeCommand = false;
 
@@ -90,21 +90,21 @@ export class AppComponent implements OnInit {
       mergeMap(res => {
           this.isAngularProject = false;
           return this.commandService.getProjects();
+      }),
+      tap((projects: string[]) => {
+        this.availableProjects = projects;
       })
     )
-    .pipe(tap((projects: string[]) => {
-      this.availableProjects = projects;
-    }))
     .subscribe(() => {
-      if (this.serveCommandId) {
-        this.stopServing(this.serveCommandId);
+      if (this.isServing) {
+        this.stopServing();
       }
     });
   }
 
-  stopServing(serveCommandId): void {
+  stopServing(): void {
     this.isStoppingServeCommand = true;
-    this.commandService.stopServing(serveCommandId)
+    this.commandService.stopServing()
     .subscribe(
       () => {},
       error => {
@@ -114,51 +114,34 @@ export class AppComponent implements OnInit {
         });
       },
       () => {
-        this.serveCommandId = null;
-        localStorage.removeItem('ngServeCommandId');
+        this.isServing = false;
         this.isStoppingServeCommand = false;
       }
     );
   }
 
   checkIfRunningServeCommand(): void {
-    const savedCommandId = localStorage.getItem('ngServeCommandId');
-    if (savedCommandId) {
-      this.commandService.checkCommandStatus(savedCommandId).subscribe(status => {
-        this.serveCommandId = savedCommandId;
+    this.commandService.isServing().subscribe(isServing => {
+      this.isServing = isServing;
+      if (isServing) {
         this.isAngularProject = true;
         this.isReadyForWork = true;
-      }, error => {
-        this.serveCommandId = null;
+      } else {
         this.checkAngularProject();
-        localStorage.removeItem('ngServeCommandId');
-      });
-    } else {
-      this.serveCommandId = null;
-      this.checkAngularProject();
-    }
+      }
+    });
   }
 
   sendCommand(userCommand: string, commandType?: AngularCommandType): void {
     const request = new CommandRequest(userCommand);
 
     this.commandService.sendCommand(request).pipe(
-      mergeMap(commandId => {
-        if (commandType === AngularCommandType.serve) {
-          this.serveCommandId = commandId;
-        }
-        return timer(0, this.COMMAND_STATUS_CHECK_INTERVAL)
-        .pipe(
-          mergeMap(() => {
-            if (commandType === AngularCommandType.serve && this.isStoppingServeCommand) {
-              return of({id: '', status: AngularCliProcessStatus.error});
-            }
-            return this.commandService.checkCommandStatus(commandId);
-          }),
-          filter((response: CommandStatusResponse) => response.status !== AngularCliProcessStatus.working),
+      mergeMap(commandId => timer(0, this.COMMAND_STATUS_CHECK_INTERVAL).pipe(
+          mergeMap(() => this.commandService.checkCommandStatus(commandId)),
+          filter(response => response.status !== AngularCliProcessStatus.working),
           take(1)
-        );
-      })
+        )
+      )
     )
     .subscribe(response => {
       switch (response.status) {
@@ -172,13 +155,12 @@ export class AppComponent implements OnInit {
   commandDone(response: CommandStatusResponse, commandType?: AngularCommandType) {
     if (commandType === AngularCommandType.new) {
       this.checkAngularProject();
-    } else if (commandType === AngularCommandType.serve) {
-      this.serveCommandId = response.id;
     }
   }
 
   sendServeCommand(serveCommand: string): void {
     this.sendCommand(serveCommand, AngularCommandType.serve);
+    this.isServing = true;
   }
 
   sendNewCommand(newCommand: string): void {

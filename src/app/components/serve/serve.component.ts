@@ -19,7 +19,7 @@ export class ServeComponent {
 
   @Output() sendCommand = new EventEmitter<string>();
   @Output() serveStopper = new EventEmitter<string>();
-  @Input() serveCommandId: string;
+  @Input() isServing: boolean;
   @Input() isStoppingServeCommand: boolean;
   command: AngularCliCommand;
   options = new NgserveOptions();
@@ -34,7 +34,7 @@ export class ServeComponent {
   }
 
   stopServing(): void {
-    this.serveStopper.emit(this.serveCommandId);
+    this.serveStopper.emit();
   }
 
   isPortValid(): boolean {
