@@ -11,6 +11,7 @@
     "start:prod:client": "http-server ./dist/ngWiz -p 10111",
     "start:prod:server": "node ./dist/server/server.js",
     "build": "ng build && tsc -p ./server/",
+    "install": "npm run build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
