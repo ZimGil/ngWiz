@@ -6,6 +6,14 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `npm start` for a dev server. This will run both angular server and the backend server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
+## Production server
+
+Run `npm run start:prod` to start both server and client code in production mode
+
+## Create a global link to ng-wiz
+
+Run `npm link` or `npm ln` to link the repository to the global name `ng-wiz` to run it from any angular project directory
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
