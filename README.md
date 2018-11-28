@@ -8,6 +8,9 @@ Run `npm start` for a dev server. This will run both angular server and the back
 
 ## Production server
 
+You need to make sure you built the app before running it in production mode.
+run `npm run build` to build the app
+
 Run `npm run start:prod` to start both server and client code in production mode
 
 ## Create a global link to ng-wiz
