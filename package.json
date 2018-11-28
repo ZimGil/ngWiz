@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "concurrently -n start-client,start-server -c bgBlue.bold,bgMagenta.bold npm:start:client-no-progress npm:start:server",
+    "start": "node ./bin/ng-wiz.js",
     "start:client": "ng serve",
     "start:client-no-progress": "ng serve --progress=false",
     "start:server": "ts-node server/server.ts",
@@ -38,6 +38,7 @@
     "http-server": "^0.11.1",
     "log4js": "^3.0.6",
     "moment": "^2.22.2",
+    "opn": "^5.4.0",
     "rxjs": "^6.0.0",
     "zone.js": "^0.8.26"
   },

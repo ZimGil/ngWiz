@@ -14,6 +14,8 @@ Run `npm run start:prod` to start both server and client code in production mode
 
 Run `npm link` or `npm ln` to link the repository to the global name `ng-wiz` to run it from any angular project directory
 
+Go into an angular project directory or your development directory, and run `ng-wiz` to launch the application
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
