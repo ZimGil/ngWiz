@@ -35,7 +35,7 @@ npm install
 This will run `ng-wiz` in developer mode with
 `ng-wiz`'s folder as root
 ```
-npm start:dev
+npm start
 ```
 
 ### <a name="run-globally"></a> Run `ng-wiz` globally
