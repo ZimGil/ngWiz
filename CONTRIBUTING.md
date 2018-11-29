@@ -30,6 +30,15 @@ go into the newly created folder and install all dependencies
 cd ng-wiz
 npm install
 ```
+This will also build the application and create an initial `dist` folder.
+
+To see code changes, run build after you make your changes
+to create the `dist` folder:
+```
+npm run build
+```
+
+after that, start `ng-wiz` again.
 
 ### <a name="run-locally"></a> Run `ng-wiz` locally
 This will run `ng-wiz` in developer mode with

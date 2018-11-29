@@ -2,30 +2,22 @@
 const concurrently = require('concurrently');
 const path = require('path');
 const opn = require('opn');
+const ngWiz = require('../dist/server/server');
 
-const clientSideDistFolder = path.join(__dirname, '../dist/ngWiz');
-const serverSideDistFolder = path.join(__dirname, '../dist/server/server.js');
-const httpServer = path.join(__dirname, '../node_modules/.bin/http-server');
+const PORT = 3000;
+const STATIC_FILES_LOCATION = path.join(__dirname, '../dist/ngWiz');
 
-concurrently([
-  { command: `node ${ serverSideDistFolder }`, name: 'server', prefixColor: 'bgBlue.bold' },
-  { command: `${ httpServer } ${ clientSideDistFolder } -p 10111`, name: 'client', prefixColor: 'bgMagenta.bold' }
-], {
-    prefix: 'name',
-    killOthers: ['failure', 'success'],
-    restartTries: 3,
+let isOpenBrowser;
+
+process.argv.forEach((val, index, array) => {
+  if (val === '-o') {
+      isOpenBrowser = true;
+  }
 });
 
+
+// run the app
+ngWiz(PORT, STATIC_FILES_LOCATION, isOpenBrowser)
 // Opens the url in the default browser
-// it will wait 1 second since servers will run until the app exits
-// so we can't just 'then' them
-wait(1000)
-.then(() => opn('http://localhost:10111'))
+.then(() => isOpenBrowser ? opn(`http://localhost:${ PORT }`) : null)
 .catch((error) => console.error(error));
-
-
-function wait(milliseconds) {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(), milliseconds || 0);
-  })
-}
