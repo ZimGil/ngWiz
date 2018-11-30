@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const concurrently = require('concurrently');
 const path = require('path');
 const opn = require('opn');
 const ngWiz = require('../dist/server/server');
@@ -17,7 +16,7 @@ process.argv.forEach((val, index, array) => {
 
 
 // run the app
-ngWiz(PORT, STATIC_FILES_LOCATION, isOpenBrowser)
+ngWiz(PORT, STATIC_FILES_LOCATION)
 // Opens the url in the default browser
 .then(() => isOpenBrowser ? opn(`http://localhost:${ PORT }`) : null)
 .catch((error) => console.error(error));

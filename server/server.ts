@@ -2,7 +2,6 @@ import express = require('express');
 import path = require('path');
 import compression = require('compression');
 import fs = require('fs');
-import childProcess = require('child_process');
 import { timer } from 'rxjs';
 //
 import { ProcessRunner } from './process-runner';
@@ -16,7 +15,7 @@ import { GetProjectsResponse } from './models/get-projects-response.interface';
 
 module.exports = runServer;
 
-function runServer(PORT: number, STATIC_FILES_LOCATION: string, isOpenBrowser: boolean): Promise<express.Application> {
+function runServer(PORT: number, STATIC_FILES_LOCATION: string): Promise<express.Application> {
   const app: express.Application = express();
   const logger = new NgWizLogger('debug');
 
