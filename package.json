@@ -3,11 +3,18 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "npm run build && node ./bin/ng-wiz.js -o",
+    "start:client": "ng serve",
+    "start:client-no-progress": "ng serve --progress=false",
+    "start:server": "ts-node server/server.ts",
+    "build": "ng build && tsc -p ./server/",
+    "install": "npm run build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
+  },
+  "bin": {
+    "ng-wiz": "bin/ng-wiz.js"
   },
   "private": true,
   "dependencies": {
@@ -22,9 +29,12 @@
     "@angular/router": "^6.0.2",
     "appdata-path": "^1.0.0",
     "colors": "^1.3.2",
+    "compression": "^1.7.3",
     "core-js": "^2.5.4",
+    "express": "^4.16.4",
     "log4js": "^3.0.6",
     "moment": "^2.22.2",
+    "opn": "^5.4.0",
     "rxjs": "^6.0.0",
     "zone.js": "^0.8.26"
   },

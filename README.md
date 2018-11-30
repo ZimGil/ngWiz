@@ -1,27 +1,52 @@
-# ngWiz
+# ng-wiz
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.3.
+<!-- add description -->
 
-## Development server
+## How to use
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+### Globally
 
-## Code scaffolding
+#### Installation
+```
+npm install -g https://github.com/ZimGil/ngWiz.git
+```
+<!-- change this once this is published to the npm package name -->
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+#### Usage
+Go to your development folder (where you keep your projects) and run
+```
+ng-wiz
+```
+to open that folder.
 
-## Build
+If you run that command inside an angular project, that project will be open in `ng-wiz`
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+### As a dependency
 
-## Running unit tests
+#### Installation
+Install `ng-wiz` as a dev dependency in your node.js project by running
+```
+npm install --save-dev https://github.com/ZimGil/ngWiz.git
+```
+<!-- change this once this is published to the npm package name -->
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+#### Usage
+You can use `ng-wiz` directly by running
+```
+npx ng-wiz
+```
+Or by calling it with an npm script
+```
+"scripts": {
+  // ...
+  "ng-wiz": "ng-wiz"
+}
+```
+Then, you can run it with
+```
+npm run ng-wiz
+```
 
-## Running end-to-end tests
+## Contributing
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Want to help us out? great! Check out our [Contributing](CONTRIBUTING.md) guide for more details
