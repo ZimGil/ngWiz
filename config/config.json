@@ -1,0 +1,8 @@
+{
+  "port": "3000",
+  "url": "http://localhost",
+  "launchBrowser": "true",
+  "_COMMENT_logDirectory": "LEAVE EMPTY FOR DEFAULT %APPDATA%/npm/ngWiz/logs",
+  "logDirectory": "",
+  "logDateFormat": "DDMMYYTHHmmZZ"
+}
