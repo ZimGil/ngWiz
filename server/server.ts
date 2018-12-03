@@ -50,10 +50,10 @@ export function runServer(PORT: number, STATIC_FILES_LOCATION: string): Promise<
   app.get('/stopServing', (req, res) => {
     logger.log.debug(`Request to stop "ng serve" command`);
     if (processRunner.runningProcesses[ngServeCommandId]) {
-      const port = processRunner.runningProcesses[ngServeCommandId].command.match(/\s([0-9]{4,5})\s?/g)[0].replace(/\s/g, '');
+      const commandPort = processRunner.runningProcesses[ngServeCommandId].command.match(/\s([0-9]{4,5})\s?/g)[0].replace(/\s/g, '');
       const killProcess = {
         id: 'killer',
-        params: `for /f "tokens=5" %a in ('netstat -ano ^| find "${port}" ^| find "LISTENING"') do taskkill /f /pid %a`
+        params: `for /f "tokens=5" %a in ('netstat -ano ^| find "${commandPort}" ^| find "LISTENING"') do taskkill /f /pid %a`
       };
       const ngServeStopper = timer(0, 500).subscribe(() => {
         if (processRunner.runningProcesses[ngServeCommandId].status === AngularCliProcessStatus.done) {
