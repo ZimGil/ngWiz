@@ -1,13 +1,14 @@
 import { configure, getLogger, Logger } from 'log4js';
-import { getAppDataPath } from 'appdata-path';
-//
 import moment = require('moment');
 import fs = require('fs');
 import path = require('path');
+//
+import { ngWizConfig } from '../config/ng-wiz-config';
 
-const LOG_FILES_DIR = getAppDataPath(`ngWiz${path.sep}logs`);
-const dateInFormat = moment().format('DDMMYYTHHmmZZ'); // [171118T1510+0200]
-const logFileName = `${LOG_FILES_DIR}/[${dateInFormat}].debug.log`;
+const config = ngWizConfig();
+
+const dateInFormat = moment().format(config.logDateFormat);
+const logFileName = `${config.logDirectory}/[${dateInFormat}].debug.log`;
 
 export class NgWizLogger {
 
@@ -33,11 +34,11 @@ export class NgWizLogger {
   }
 
   private deleteOldLogs(log: Logger): void {
-    fs.readdir(LOG_FILES_DIR, (err, files) => {
+    fs.readdir(config.logDirectory, (err, files) => {
       files.forEach(file => {
 
         if (path.extname(file) === '.log') {
-          const filePath = LOG_FILES_DIR + path.sep + file;
+          const filePath = config.logDirectory + path.sep + file;
           fs.stat(filePath, (statsErr, stats) => {
             const lastModify = moment(stats.mtime);
 
