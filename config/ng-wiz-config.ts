@@ -15,7 +15,6 @@ export function ngWizConfig(): NgWizConfig {
 
 const defaultConfig = {
   port: 3000,
-  url: 'http://localhost',
   launchBrowser: true,
   logDirectory: getAppDataPath(`npm${path.sep}ngWiz${path.sep}logs`),
   logDateFormat: 'DDMMYYTHHmmZZ'
@@ -27,9 +26,6 @@ function handleJSONFile(data): NgWizConfig {
 
   // The port ngWiz server is listening to.
   configFile.port ? config.port = configFile.port : config.port = defaultConfig.port;
-
-  // The URL ngWiz will be accessible from.
-  configFile.url ? config.url = configFile.url : config.url = defaultConfig.url;
 
   // Launch ngWiz browser window when ngWiz starts.
   configFile.launchBrowser ? config.launchBrowser = configFile.launchBrowser : config.launchBrowser = defaultConfig.launchBrowser;
