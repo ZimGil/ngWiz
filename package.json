@@ -14,7 +14,7 @@
     "e2e": "ng e2e"
   },
   "bin": {
-    "ng-wiz": "bin/ng-wiz.js"
+    "ng-wiz": "dist/bin/ng-wiz.js"
   },
   "private": true,
   "dependencies": {

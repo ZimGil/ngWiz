@@ -13,9 +13,7 @@ import { CommandStatusResponse } from './models/command-status-response.interfac
 import { IsAngularProjectResponse } from 'server/models/is-angular-project-response.interface';
 import { GetProjectsResponse } from './models/get-projects-response.interface';
 
-module.exports = runServer;
-
-function runServer(PORT: number, STATIC_FILES_LOCATION: string): Promise<express.Application> {
+export function runServer(PORT: number, STATIC_FILES_LOCATION: string): Promise<express.Application> {
   const app: express.Application = express();
   const logger = new NgWizLogger('debug');
 
