@@ -16,7 +16,7 @@ export function ngWizConfig(): NgWizConfig {
 const defaultConfig = {
   port: 3000,
   launchBrowser: true,
-  logDirectory: getAppDataPath(`npm${path.sep}ngWiz${path.sep}logs`),
+  logDirectory: getAppDataPath(`npm${path.sep}node_modules${path.sep}ngWiz${path.sep}logs`),
   logDateFormat: 'DDMMYYTHHmmZZ'
 };
 
