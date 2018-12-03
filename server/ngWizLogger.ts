@@ -6,7 +6,6 @@ import path = require('path');
 import { ngWizConfig } from '../config/ng-wiz-config';
 
 const config = ngWizConfig();
-
 const dateInFormat = moment().format(config.logDateFormat);
 const logFileName = `${config.logDirectory}/[${dateInFormat}].debug.log`;
 

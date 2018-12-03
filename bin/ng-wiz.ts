@@ -6,7 +6,6 @@ import { runServer as ngWiz } from '../server/server';
 import { ngWizConfig } from '../config/ng-wiz-config';
 
 const STATIC_FILES_LOCATION = path.join(__dirname, '../ngWiz');
-
 const config = ngWizConfig();
 let launchBrowser = config.launchBrowser;
 
@@ -18,7 +17,6 @@ process.argv.forEach((val, index, array) => {
     launchBrowser = false;
   }
 });
-
 
 // run the app
 ngWiz(config.port, STATIC_FILES_LOCATION)
