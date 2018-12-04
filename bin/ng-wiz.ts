@@ -3,7 +3,7 @@ import path = require('path');
 import opn = require('opn');
 //
 import { runServer as ngWiz } from '../server/server';
-import { ngWizConfig } from '../config/ng-wiz-config';
+import { ngWizConfig } from '../server/config/ng-wiz-config';
 
 const STATIC_FILES_LOCATION = path.join(__dirname, '../ngWiz');
 const config = ngWizConfig();

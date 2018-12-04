@@ -10,4 +10,10 @@ logDirectory: string;
 
 // Date format for logging.
 logDateFormat: string;
+
+// Launch browser when running development server with "ng serve -o"
+ngServeLaunchBrowser: boolean;
+
+// The port the development server run at
+ngServePort: number;
 }

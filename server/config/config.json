@@ -4,5 +4,7 @@
   "_COMMENT_logDirectory": "LEAVE EMPTY FOR DEFAULT %APPDATA%/npm/ngWiz/logs",
   "logDirectory": "",
   "_COMMENT_logDateFormat": "formatting: https://devhints.io/moment#formatting-1",
-  "logDateFormat": "DDMMYYTHHmmZZ"
+  "logDateFormat": "DDMMYYTHHmmZZ",
+  "ngServeLaunchBrowser": "true",
+  "ngServeProt": "4200"
 }
