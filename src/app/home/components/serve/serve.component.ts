@@ -1,18 +1,17 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnInit } from '@angular/core';
 //
 import * as _ from 'lodash';
 //
 import { AngularCliCommand } from '../../models/angular-cli-command.interface';
 import { NgserveOptions } from '../../default-values/ng-serve-options';
-import { CommandService } from './../../services/command/command.service';
-import { ErrorService } from './../../services/error/error.service';
+import { NgWizConfig } from '../../../../../server/config/ng-wiz-config.interface';
 
 @Component({
   selector: 'app-serve',
   templateUrl: './serve.component.html',
   styleUrls: ['./serve.component.css']
 })
-export class ServeComponent {
+export class ServeComponent implements OnInit {
 
   private readonly MINIMUM_PORT = 1000;
   private readonly MAXIMUM_PORT = 99999;
@@ -21,13 +20,14 @@ export class ServeComponent {
   @Output() serveStopper = new EventEmitter<string>();
   @Input() isServing: boolean;
   @Input() isStoppingServeCommand: boolean;
+  @Input() config: NgWizConfig;
   command: AngularCliCommand;
   options = new NgserveOptions();
 
-  constructor(
-    private commandService: CommandService,
-    private errorService: ErrorService
-  ) {}
+  ngOnInit() {
+    this.options.optionalFlags.port.value = this.config.ngServePort;
+    this.options.optionalFlags.open.isActive = this.config.ngServeLaunchBrowser;
+  }
 
   startServing(): void {
     this.sendCommand.emit(this.options.createCommandString());

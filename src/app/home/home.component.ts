@@ -12,6 +12,7 @@ import { AngularCommandType } from './models/angular-command-type.enum';
 import { CommandStatusResponse } from './models/command-status-response.interface';
 import { IsAngularProjectResponse } from './models/is-angular-project-response.interface';
 import { GetProjectsResponse } from './models/get-projects-response.interface';
+import { NgWizConfig } from './../../../server/config/ng-wiz-config.interface';
 
 @Component({
   selector: 'app-home',
@@ -29,6 +30,7 @@ export class HomeComponent implements OnInit {
   availableProjects: string[] = [];
   isStoppingServeCommand = false;
   currentWorkingDir: string;
+  config: NgWizConfig;
 
   constructor(
     private commandService: CommandService,
@@ -36,8 +38,16 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.getConfig();
     this.keepAlive();
     this.checkIfRunningServeCommand();
+  }
+
+  getConfig(): void {
+    this.commandService.getConfig().subscribe(config => {
+      this.config = config;
+      console.log('config: ', this.config);
+    });
   }
 
   checkAngularProject(): void {
