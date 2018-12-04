@@ -12,10 +12,12 @@ import { NgWizLogger } from './ngWizLogger';
 import { CommandStatusResponse } from './models/command-status-response.interface';
 import { IsAngularProjectResponse } from 'server/models/is-angular-project-response.interface';
 import { GetProjectsResponse } from './models/get-projects-response.interface';
+import { ngWizConfig } from './config/ng-wiz-config';
 
 export function runServer(PORT: number, STATIC_FILES_LOCATION: string): Promise<express.Application> {
   const app: express.Application = express();
   const logger = new NgWizLogger('debug');
+  const config = ngWizConfig();
 
   let ngServeCommandId = null;
 
@@ -29,6 +31,11 @@ export function runServer(PORT: number, STATIC_FILES_LOCATION: string): Promise<
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
+  });
+
+  app.get('/config', (req, res) => {
+    logger.log.debug('Client request for config', config);
+    res.send(config);
   });
 
   app.get('/isServing', (req, res) => {

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 //
 import { CommandRequest } from '../../models/angular-command-request';
 import { CommandStatusResponse } from '../../models/command-status-response.interface';
+import { NgWizConfig } from '../../../../../server/config/ng-wiz-config.interface';
 
 
 @Injectable({
@@ -16,6 +17,10 @@ export class CommandService {
   private readonly PORT = 3000;
 
   constructor(private http: HttpClient) { }
+
+  getConfig(): Observable<NgWizConfig> {
+    return this.http.get<NgWizConfig>(`${this.BASE_URL}:${this.PORT}/config`);
+  }
 
   isAngularProject() {
     return this.http.get(`${this.BASE_URL}:${this.PORT}/isAngularProject`);
