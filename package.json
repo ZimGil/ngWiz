@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "npm run build && node ./bin/ng-wiz.js",
+    "start": "npm run build && node ./dist/bin/ng-wiz.js",
     "start:client": "ng serve",
     "start:client-no-progress": "ng serve --progress=false",
     "start:server": "ts-node server/server.ts",
