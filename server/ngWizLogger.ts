@@ -3,7 +3,7 @@ import moment = require('moment');
 import fs = require('fs');
 import path = require('path');
 //
-import { ngWizConfig } from '../config/ng-wiz-config';
+import { ngWizConfig } from './config/ng-wiz-config';
 
 const config = ngWizConfig();
 const dateInFormat = moment().format(config.logDateFormat);
