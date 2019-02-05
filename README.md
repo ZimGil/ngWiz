@@ -1,6 +1,6 @@
 # ng-wiz
 
-<!-- add description -->
+This Project was discontinued when [Angular Console](https://angularconsole.com/) was released
 
 ## How to use
 
